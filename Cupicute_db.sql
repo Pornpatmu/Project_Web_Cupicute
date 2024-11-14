@@ -1,7 +1,7 @@
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
-SET time_zone = '+07:00';
+-- SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+-- SET AUTOCOMMIT = 0;
+-- START TRANSACTION;
+-- SET time_zone = '+07:00';
 
 
 DROP DATABASE IF EXISTS cupicute_db;
@@ -110,6 +110,7 @@ select * from Admin;
 select * from User;
 select * from ProductCategory;
 select * from Product;
+
 -- CREATE TABLE Manage (
 -- 	ProductID VARCHAR(4) not null PRIMARY KEY,
 --     AdminID VARCHAR(7) not null PRIMARY KEY
