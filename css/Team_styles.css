@@ -1,0 +1,111 @@
+
+body{
+    background-color: #F5EBED;
+    }
+
+main{
+    text-align: center;
+    font-family: Sans-serif;
+    justify-content: center;
+}
+
+article .About_us{
+    padding-top: 50px;
+    text-align: center;
+}
+
+.profile {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 320px;
+    height: 500px;
+    text-align: center;
+    padding: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+    position: relative;
+    margin-bottom: 47px;
+    
+
+}
+
+ .container {
+    display: flex;
+    justify-content: center; 
+    margin-top: 50px;
+    margin-bottom: 50px;
+    color: black;
+    border-radius: 10px; 
+    
+}
+
+.profile .Bow{
+    opacity: 0;
+    position: absolute;
+    top: -80px; 
+    left: 55%;
+    transform: translateX(-50%); /
+}
+.profile:hover .Bow {
+    opacity: 1; 
+}
+
+
+.profile:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(255, 20, 147, 0.4);
+    background-color: #FFBEDB; 
+
+}
+
+.profile .detail {
+    width: auto;
+    margin: 20px;
+
+    
+    
+}
+.profile .detail a{
+    text-decoration: none;
+    
+}
+
+.profile img {
+    margin-top: 50px;
+    width: 230px;
+    height: 230px;
+    object-fit: cover; 
+    display: block; 
+    margin-left: auto;
+    margin-right: auto; 
+    border-radius: 50%;     
+}
+.profile a {
+    color: #FF3992;
+    margin-top: 5px; 
+    font-size: 16px;
+    display: block;
+    font-weight: bold;
+
+}
+.profile a:hover {
+    color: #ff4c9c;
+    background-color: #ffffff;
+    border-radius: 15px; 
+    padding: 5px;
+}
+
+.About_us {
+    font-family: 'Staatliches';
+    color: #ff1493;
+    font-size: 50px;
+    letter-spacing: 2px;
+    margin-top: 60px;
+    margin-bottom: 5px;
+
+}
+
+
+
+

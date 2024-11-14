@@ -1,0 +1,234 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Konkhmer+Sleokchher&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Staatliches&display=swap');
+
+/*header*/
+* {
+  text-decoration: none; /* เพิ่ม*/
+  color: inherit; /* เพิ่ม*/
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#nameproject {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 10px;
+  text-align: center;
+  color: rgba(66, 60, 61, 1);
+  background-color: rgba(233, 205, 255, 1);
+  padding: 4.3px;
+  box-sizing: border-box;
+  height: auto;
+  width: auto;
+}
+
+#grouppage {
+  list-style-type: none;
+  display: flex;
+  list-style: none;
+  cursor: pointer; /*เพิ่ม*/
+}
+
+
+
+#grouppage li a {
+  display: block;
+
+}
+
+.dropdownproduct {
+  display: none;
+}
+
+.dropdownproduct li {
+  display: block;
+}
+
+
+
+
+.page a,
+.product {
+  padding-left: 20px;
+  margin-left: 49px;
+  padding-right: 20px;
+  display: inline-block;
+  position: relative;
+  font-family: "Konkhmer Sleokchher", system-ui;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 15px;
+  color: rgba(255, 133, 188, 1);
+  text-decoration: none;
+}
+
+
+.dropdownproduct {
+  display: none;
+  border-radius: 0px;
+  background-color: white;
+  position: absolute;
+  z-index: 1;
+  text-decoration: none;
+  left: 0;
+  width: max-content;
+  white-space: nowrap;
+}
+
+.dropdownproduct li a {
+  text-decoration: none;
+  color: rgba(255, 178, 212, 1);
+  padding-left: 32px;
+  padding-right: 32px;
+  display: block;
+}
+
+
+.currentpage a {
+  padding-left: 20px;
+  margin-left: 49px;
+  padding-right: 20px;
+  display: inline-block;
+  position: relative;
+  font-family: "Konkhmer Sleokchher", system-ui;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 15px;
+  color: rgba(255, 57, 146, 1);
+  text-decoration: none;
+  background-color: rgba(255, 216, 233, 1);
+  border-radius: 15px;
+}
+
+
+.page a:hover {
+  color: rgba(255, 57, 146, 1);
+}
+
+.product:hover {
+  color: rgba(255, 57, 146, 1);
+  background-color: rgba(255, 216, 233, 1);
+  border-radius: 15px;
+  display: block;
+}
+
+.product:hover .dropdownproduct {
+  display: block;
+}
+
+.dropdownproduct li a:hover {
+  color: rgba(255, 57, 146, 1);
+  background-color: rgb(247, 243, 243);
+  width: auto;
+}
+
+.logo {
+  width: 190px;
+  height: auto;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: -45px;
+}
+header { /* เพิ่ม*/
+  position: sticky;
+  z-index: 1000;
+  top: 0;
+  }
+
+  
+#navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+
+}
+
+.search {
+  margin-left: 55px;
+  margin-right: 30px;
+  padding: 0.5px 30px;
+  font-family: "Konkhmer Sleokchher", system-ui;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 15px;
+  color: rgba(255, 57, 146, 1);
+  background-color: rgba(244, 236, 236, 1);
+  border-radius: 15px;
+}
+
+.user {
+  margin-left: 25px;
+  padding-right: 40px;
+  margin-right: 80px;
+  color: rgba(255, 57, 146, 1);
+  background-color: rgba(255, 190, 219, 1);
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+
+}
+
+.usertext {
+  font-family: "Konkhmer Sleokchher", system-ui;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+  margin-left: 19px;
+  letter-spacing: 2px;
+
+
+}
+
+#usericon {
+  font-size: 30px;
+  margin-right: 19px;
+  margin-left: 0px;
+  background-color: rgba(255, 220, 226, 1);
+  border-radius: 50%;
+}
+
+/*.........................................................*/
+
+/*footer*/
+footer {
+  font-family: 'Staatliches';
+  width: 100%;
+  background-color: #EACCFF;
+  text-align: center;
+  padding: 1px;
+  display: flex;
+  justify-content: center;
+}
+
+footer .footer-content p {
+  margin-left: 10px;
+  font-size: 15px;
+  color: #CC8FF7;
+  display: flex;
+  align-items: center;
+
+
+
+}
+
+footer .footer-logo {
+  width: 45px;
+  height: auto;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+footer .footer-content span {
+  margin-left: 10px;
+  letter-spacing: 5px;
+  color: #AF79D4;
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+
+}
