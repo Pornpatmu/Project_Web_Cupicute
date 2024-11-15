@@ -2,10 +2,10 @@
 <html lang="en">
 
 <head>
-    <link rel="stylesheet" href="/c/Login_Style.css">
-    <link rel="stylesheet" href="/c/components.css">
+    <link rel="stylesheet" href="/css/Login_Style.css">
+    <link rel="stylesheet" href="/css/components.css">
 </head>
-<!-- header -->
+<!-- =================== HEADER  =================== -->
 
 <body>
     <header>
@@ -26,7 +26,7 @@
                     <li class="page"><a href="/Team">About Us</a></li>
                 </ul>
             </nav>
-            <img class="logo" src="/i/logo_whiteHD.png" alt="Logo">
+            <img class="logo" src="/images/Normal_page/logo_whiteHD.png" alt="Logo">
             <nav>
                 <ul id="grouppage">
                     <li class="search">Search</li>
@@ -39,14 +39,14 @@
             </nav>
         </div>
     </header>
-    <!-- ....................................................... -->
-    <main>
+<!-- =================== MAIN CONTENT =================== -->
+<main>
         <div class="box1">
             <div class="login-container">
                 <div class="login-box">
                     <h1>Login</h1>
-                    <img class="heartpng" src="/i/heart.png" alt="heart Image">
-                    <form action="/form-login" method="POST">
+                    <img class="heartpng" src="/images/Normal_page/heart.png" alt="heart Image">
+                    <form id="login-form">
                         <div class="input-group">
                             <label for="username">Username</label>
                             <input type="text" id="username" name="username" placeholder="Enter your username" required>
@@ -56,46 +56,30 @@
                             <div class="password-container">
                                 <input type="password" id="password" name="password" placeholder="Enter your password"
                                     required>
-                                <img id="eye-icon" src="/i/show.png" alt="Show Password" onclick="togglePassword()">
+                                <img id="eye-icon" src="/images/Normal_page/show.png" alt="Show Password">
                             </div>
                         </div>
-                        <button type="submit">Login</button>
+                        
+                        <button type="button">Login</button>
                     </form>
+
                 </div>
             </div>
-            <img class="pnglogo_login" src="/i/cupicute logo login.png" alt="CUPICUTE logo">
+            <img class="pnglogo_login" src="/images/Normal_page/cupicute logo login.png" alt="CUPICUTE logo">
         </div>
 
     </main>
 
-    <!-- ******************************* -->
-    <!-- footer -->
+<!-- =================== FOOTER  =================== -->
+
     <footer>
         <div class="footer-content">
             <p>COPY RIGHT BY <span>CUPICUTE
-                    <img src="/i/logo_whiteFT.png" class="footer-logo" alt="CUPICUTE Logo">
+                    <img src="/images/Normal_page/logo_whiteFT.png" class="footer-logo" alt="CUPICUTE Logo">
                 </span> PROJECT - ITS241_WEB TECHNOLOGIES AND APPLICATIONS</p>
         </div>
     </footer>
-    <script>
-
-
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const eyeIcon = document.getElementById('eye-icon');
-
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                eyeIcon.src = '/i/hide.png';
-            } else {
-                passwordInput.type = 'password';
-                eyeIcon.src = '/i/show.png';
-            }
-        }
-
-
-
-    </script>
+    <script type="module" src="/client_js/function/login.js"></script>
 
 </body>
 

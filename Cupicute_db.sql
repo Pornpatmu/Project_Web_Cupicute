@@ -1,119 +1,145 @@
--- SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
--- SET AUTOCOMMIT = 0;
--- START TRANSACTION;
--- SET time_zone = '+07:00';
-
-
-DROP DATABASE IF EXISTS cupicute_db;
-CREATE DATABASE IF NOT EXISTS `cupicute_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE  IF NOT EXISTS `cupicute_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `cupicute_db`;
+-- MySQL dump 10.13  Distrib 8.0.38, for Win64 (x86_64)
+--
+-- Host: localhost    Database: cupicute_db
+-- ------------------------------------------------------
+-- Server version	8.0.38
 
--- Table for Admin
--- drop table Admin;
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-CREATE TABLE Admin (
-    AdminID VARCHAR(7) not null  unique,
-    FirstName VARCHAR(50),
-    LastName VARCHAR(50),
-    PhoneNumber VARCHAR(15),
-    Address VARCHAR(200),
-    Email VARCHAR(100),
-    constraint	cn_PK_AdminID	primary key (AdminID)
-);
-INSERT INTO Admin (AdminID, FirstName, LastName, PhoneNumber, Address,Email)
-VALUES 
-('6687003', 'Taechinee', 'Ratanwimon', '098-946-9619', 'Mahidol Salaya','taechinee.rat@student.mahidol.edu'),
-('6687018', 'Natnicha', 'Malailoy', '099-326-9915', 'Mahidol Salaya','natnicha.maa@student.mahidol.edu'),
-('6687039','Pornpat','Punthong','081-519-3694','Mahidol Salaya','pornpat.pun@student.mahidol.edu'),
-('6687070','Wanlida','Suphasri-itsara','090-142-6358','Mahidol Salaya','wanlida.sup@student.mahidol.edu'),
-('6687000','Mali','Suayjang','098-765-4321','Mahidol Salaya','Mali.sua@student.mahidol.edu');
+--
+-- Table structure for table `admin`
+--
 
--- Table for User
--- drop table user;
+DROP TABLE IF EXISTS `admin`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `admin` (
+  `AdminID` varchar(7) NOT NULL,
+  `FirstName` varchar(50) DEFAULT NULL,
+  `LastName` varchar(50) DEFAULT NULL,
+  `PhoneNumber` varchar(15) DEFAULT NULL,
+  `Address` varchar(200) DEFAULT NULL,
+  `Email` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`AdminID`),
+  UNIQUE KEY `AdminID` (`AdminID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-CREATE TABLE User (
-    UserID  VARCHAR(5)  not null  unique,
-    Username VARCHAR(50) NOT NULL,
-    U_Password VARCHAR(50) NOT NULL,
-    LoginTimestamp DATETIME,
-    User_Image VARCHAR(255) ,
-    AdminID VARCHAR(7),
-    constraint	cn_PK_UserID	primary key (UserID),
-    constraint	cn_FK_AdminID   foreign key (AdminID)
-								references  Admin (AdminID)
-); 
+--
+-- Dumping data for table `admin`
+--
 
-INSERT INTO User (UserID, Username, U_Password, LoginTimestamp, User_Image, AdminID)
-VALUES 
-('101', 'taechine_03', 'Ggrace2547',  '2023-10-10 08:00:00', '/image/user/101.png', '6687003'),
-('102', 'natnicha_18', 'Mint2548', '2023-10-05 14:22:15',  '/image/user/102.png','6687018'),
-('103','pornpat_39','fernfern2548','2023-10-07 09:30:15','/image/user/103.png','6687039'),
-('104','wanlida_70','pondpond2547','2023-10-07 08:12:15', '/image/user/104.png','6687070'),
-('105',',mali_00','mali2547','2023-10-07 07:25:15', '/image/user/105.png','6687000');
+LOCK TABLES `admin` WRITE;
+/*!40000 ALTER TABLE `admin` DISABLE KEYS */;
+INSERT INTO `admin` VALUES ('6687000','Mali','Suayjang','098-765-4321','Mahidol Salaya','Mali.sua@student.mahidol.edu'),('6687003','Taechinee','Ratanwimon','098-946-9619','Mahidol Salaya','taechinee.rat@student.mahidol.edu'),('6687018','Natnicha','Malailoy','099-326-9915','Mahidol Salaya','natnicha.maa@student.mahidol.edu'),('6687039','Pornpat','Punthong','081-519-3694','Mahidol Salaya','pornpat.pun@student.mahidol.edu'),('6687070','Wanlida','Suphasri-itsara','090-142-6358','Mahidol Salaya','wanlida.sup@student.mahidol.edu');
+/*!40000 ALTER TABLE `admin` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- Table for ProductCategory
--- drop table ProductCategory;
+--
+-- Table structure for table `product`
+--
 
-CREATE TABLE ProductCategory (
-    CategoryID VARCHAR(1) not null unique,
-    CategoryName VARCHAR(50),
-     constraint	cn_PK_CategoryID	primary key (CategoryID)
-);
+DROP TABLE IF EXISTS `product`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `product` (
+  `ProductID` varchar(4) NOT NULL,
+  `ProductName` varchar(100) DEFAULT NULL,
+  `Price` decimal(10,2) DEFAULT NULL,
+  `P_Description` text,
+  `ImageURL` varchar(255) DEFAULT NULL,
+  `CategoryID` varchar(5) DEFAULT NULL,
+  PRIMARY KEY (`ProductID`),
+  UNIQUE KEY `ProductID` (`ProductID`),
+  KEY `cn_FK_Category_ID` (`CategoryID`),
+  CONSTRAINT `cn_FK_Category_ID` FOREIGN KEY (`CategoryID`) REFERENCES `productcategory` (`CategoryID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-INSERT INTO ProductCategory (CategoryID, CategoryName)
-VALUES 
-('1', 'Lips'),
-('2', 'Foundation'),
-('3', 'Blush'),
-('4', 'Mascara'),
-('5', 'Highlight ');
+--
+-- Dumping data for table `product`
+--
 
--- Table for Product
--- drop table product;
+LOCK TABLES `product` WRITE;
+/*!40000 ALTER TABLE `product` DISABLE KEYS */;
+INSERT INTO `product` VALUES ('001','Venus Heart Tint',299.00,'This luxurious lip product is designed to deliver a captivating blend of color and hydration, leaving your lips feeling soft and looking radiant. Infused with a unique blend of nourishing ingredients, Lucky Charm Blam not only enhances the natural beauty of your lips but also provides long-lasting, comfortable wear.','/images/product/001.png','1'),('002','Kisses Blam Lipstick',299.00,'This luxurious matte lipstick delivers a rich, velvety finish with intense color payoff that lasts all day. Specially formulated for comfort, Kisses Matte Lipstick glides on smoothly without drying, leaving your lips feeling soft and plush.','/images/product/002.png','1'),('003','Dreamy Dew Foundation',499.00,'This lightweight, hydrating foundation is specially formulated to provide a natural, radiant finish that looks like a second skin. With its buildable coverage, Dreamy Dew Foundation effortlessly evens out skin tone and blurs imperfections without feeling heavy or cakey.','/images/product/003.png','2'),('004','Angel Touch Foundation',499.00,'This luxurious, silky-smooth foundation glides onto the skin, delivering a flawless, airbrushed finish that feels feather-light. With medium to full coverage, Angel Touch Foundation effortlessly conceals imperfections and evens out skin tone while maintaining a natural, radiant look. Formulated with hydrating and skin-friendly ingredients, it keeps skin feeling comfortable and fresh all day.','/images/product/004.png','2'),('005','Fairy Bloom Blush',399.00,'This lightweight, sheer-coverage foundation enhances your skins natural tone, delivering a soft, radiant finish that feels like a second skin. Perfect for those who prefer a barely-there look, Sweetheart Sheer Foundation smooths and blurs imperfections while letting your true beauty shine through.','/images/product/005.png','3'),('006','Blossom Breeze Blush',399.00,'This blush offers a delicate, airy finish with a hint of floral-inspired radiance, perfect for achieving a natural, flushed effect. Its finely milled texture ensures smooth application and a soft, blendable touch that complements all skin tones.','/images/product/006.png','3'),('007',' Angel’s Arrow Mascara',199.00,'Designed to give your lashes an otherworldly length and volume, this mascara adds drama and depth to your look with just a few strokes. Its rich, long-lasting formula is smudge-proof and flake-resistant, keeping your lashes bold and defined throughout the day.','/images/product/007.png','4'),('008','Lash of Love Mascara',199.00,'This mascara is crafted to add soft, fluttery volume with a touch of romance, defining each lash for a naturally beautiful effect. Its lightweight, clump-free formula enhances length and lift, perfect for a day-to-night look.','/images/product/008.png','4'),('009','Shinny glow Hightlight',399.00,'This highlighter is designed to give your skin a radiant, ethereal glow, perfect for any occasion. With its silky-smooth texture and blendable formula, it seamlessly enhances your natural features and adds a touch of luminosity to your makeup routine.','/images/product/009.png','5'),('010','Magic Dust Hightlight',399.00,'This enchanting highlighter is designed to deliver an irresistible, ethereal glow that enhances your natural beauty. With its finely milled formula, Magic Dust creates a stunning, soft-focus effect that adds luminosity to your complexion without any chalkiness.','/images/product/010.png','5');
+/*!40000 ALTER TABLE `product` ENABLE KEYS */;
+UNLOCK TABLES;
 
-CREATE TABLE Product (
-    ProductID VARCHAR(4) not null unique,
-    ProductName VARCHAR(100),
-    Price DECIMAL(10, 2),
-    P_Description TEXT,
-    ImageURL VARCHAR(255) ,
-    CategoryID VARCHAR(5),
-    constraint	cn_PK_ProductID	primary key (ProductID),
-	constraint	cn_FK_Category_ID  foreign key (CategoryID)
-								references  ProductCategory (CategoryID)
-);
-INSERT INTO Product (ProductID, ProductName,Price, P_Description, ImageURL, CategoryID)
-VALUES 
-	('001','Venus Heart Tint',299,'This luxurious lip product is designed to deliver a captivating blend of color and hydration, leaving your lips feeling soft and looking radiant. Infused with a unique blend of nourishing ingredients, Lucky Charm Blam not only enhances the natural beauty of your lips but also provides long-lasting, comfortable wear.',
-    '/image/product/001.png','1'),
-    ('002','Kisses Blam Lipstick',299,'This luxurious matte lipstick delivers a rich, velvety finish with intense color payoff that lasts all day. Specially formulated for comfort, Kisses Matte Lipstick glides on smoothly without drying, leaving your lips feeling soft and plush.',
-    '/image/product/002.png','1'),
-    ('003','Dreamy Dew Foundation',499,'This lightweight, hydrating foundation is specially formulated to provide a natural, radiant finish that looks like a second skin. With its buildable coverage, Dreamy Dew Foundation effortlessly evens out skin tone and blurs imperfections without feeling heavy or cakey.',
-    '/image/product/003.png','2'),
-    ('004','Angel Touch Foundation',499,'This luxurious, silky-smooth foundation glides onto the skin, delivering a flawless, airbrushed finish that feels feather-light. With medium to full coverage, Angel Touch Foundation effortlessly conceals imperfections and evens out skin tone while maintaining a natural, radiant look. Formulated with hydrating and skin-friendly ingredients, it keeps skin feeling comfortable and fresh all day.',
-    '/image/product/004.png','2'),
-    ('005','Fairy Bloom Blush',399,'This lightweight, sheer-coverage foundation enhances your skins natural tone, delivering a soft, radiant finish that feels like a second skin. Perfect for those who prefer a barely-there look, Sweetheart Sheer Foundation smooths and blurs imperfections while letting your true beauty shine through.',
-    '/image/product/005.png','3'),
-    ('006','Blossom Breeze Blush',399,'This blush offers a delicate, airy finish with a hint of floral-inspired radiance, perfect for achieving a natural, flushed effect. Its finely milled texture ensures smooth application and a soft, blendable touch that complements all skin tones.',
-    '/image/product/006.png','3'),
-    ('007',' Angel’s Arrow Mascara',199,'Designed to give your lashes an otherworldly length and volume, this mascara adds drama and depth to your look with just a few strokes. Its rich, long-lasting formula is smudge-proof and flake-resistant, keeping your lashes bold and defined throughout the day.',
-    '/image/product/007.png','4'),
-    ('008','Lash of Love Mascara',199,'This mascara is crafted to add soft, fluttery volume with a touch of romance, defining each lash for a naturally beautiful effect. Its lightweight, clump-free formula enhances length and lift, perfect for a day-to-night look.',
-    '/image/product/008.png','4'),
-    ('009','Shinny glow Hightlight',399,'This highlighter is designed to give your skin a radiant, ethereal glow, perfect for any occasion. With its silky-smooth texture and blendable formula, it seamlessly enhances your natural features and adds a touch of luminosity to your makeup routine.',
-    '/image/product/009.png','5'),
-    ('010','Magic Dust Hightlight',399,'This enchanting highlighter is designed to deliver an irresistible, ethereal glow that enhances your natural beauty. With its finely milled formula, Magic Dust creates a stunning, soft-focus effect that adds luminosity to your complexion without any chalkiness.',
-    '/image/product/010.png','5');
+--
+-- Table structure for table `productcategory`
+--
 
+DROP TABLE IF EXISTS `productcategory`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `productcategory` (
+  `CategoryID` varchar(1) NOT NULL,
+  `CategoryName` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`CategoryID`),
+  UNIQUE KEY `CategoryID` (`CategoryID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-select * from Admin;
-select * from User;
-select * from ProductCategory;
-select * from Product;
+--
+-- Dumping data for table `productcategory`
+--
 
--- CREATE TABLE Manage (
--- 	ProductID VARCHAR(4) not null PRIMARY KEY,
---     AdminID VARCHAR(7) not null PRIMARY KEY
--- );
+LOCK TABLES `productcategory` WRITE;
+/*!40000 ALTER TABLE `productcategory` DISABLE KEYS */;
+INSERT INTO `productcategory` VALUES ('1','Lips'),('2','Foundation'),('3','Blush'),('4','Mascara'),('5','Highlight ');
+/*!40000 ALTER TABLE `productcategory` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- insert Into Manage (
+--
+-- Table structure for table `user`
+--
+
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user` (
+  `UserID` varchar(5) NOT NULL,
+  `Username` varchar(50) NOT NULL,
+  `U_Password` varchar(50) NOT NULL,
+  `LoginTimestamp` datetime DEFAULT NULL,
+  `User_Image` varchar(255) DEFAULT NULL,
+  `AdminID` varchar(7) DEFAULT NULL,
+  PRIMARY KEY (`UserID`),
+  UNIQUE KEY `UserID` (`UserID`),
+  KEY `cn_FK_AdminID` (`AdminID`),
+  CONSTRAINT `cn_FK_AdminID` FOREIGN KEY (`AdminID`) REFERENCES `admin` (`AdminID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user`
+--
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES ('101','taechine_03','Ggrace2547','2023-10-10 08:00:00','/images/user/101.jpg','6687003'),('102','natnicha_18','Mint2548','2023-10-05 14:22:15','/images/user/102.jpg','6687018'),('103','pornpat_39','fernfern2548','2023-10-07 09:30:15','/images/user/103.jpg','6687039'),('104','wanlida_70','pondpond2547','2023-10-07 08:12:15','/images/user/104.jpg','6687070'),('105',',mali_00','mali2547','2023-10-07 07:25:15','/images/user/105.jpg','6687000');
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2024-11-15  0:00:11
