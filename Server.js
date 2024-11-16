@@ -84,28 +84,31 @@ Admin.get('/Detail', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', '/html/Detail.html'));
 });
 /* --------------------------*/
-//ต้องยืนยันตัวตน
-Admin.get('/Product',authorize, (req, res) => {
+Admin.get('/LoginSuccess', (req, res) => {
+    console.log('Request at /LoginSuccess');
+    res.sendFile(path.join(__dirname, 'public', '/html/LoginSuccess.html'));
+});
+Admin.get('/Product', (req, res) => {
     console.log('Request at /Product');
     res.sendFile(path.join(__dirname, 'public', '/html/Product.html'));
 });
-Admin.get('/ProductAdd',authorize, (req, res) => {
+Admin.get('/ProductAdd', (req, res) => {
     console.log('Request at /ProductAdd');
     res.sendFile(path.join(__dirname, 'public', '/html/ProductAdd.html'));
 });
-Admin.get('/ProductEdit',authorize, (req, res) => {
+Admin.get('/ProductEdit', (req, res) => {
     console.log('Request at /ProductEdit');
     res.sendFile(path.join(__dirname, 'public', '/html/ProductEdit.html'));
 });
-Admin.get('/User',authorize, (req, res) => {
+Admin.get('/User', (req, res) => {
     console.log('Request at /User');
     res.sendFile(path.join(__dirname, 'public', '/html/Product.html'));
 });
-Admin.get('/UserAdd',authorize, (req, res) => {
+Admin.get('/UserAdd', (req, res) => {
     console.log('Request at /UserAdd');
     res.sendFile(path.join(__dirname, 'public', '/html/UserAdd.html'));
 });
-Admin.get('/UserEdit',authorize, (req, res) => {
+Admin.get('/UserEdit', (req, res) => {
     console.log('Request at /UserEdit');
     res.sendFile(path.join(__dirname, 'public', '/html/UserEdit.html'));
 });
@@ -113,7 +116,7 @@ Admin.get('/UserEdit',authorize, (req, res) => {
 /* กำหนดเส้นทางสำหรับการดึงข้อมูลจากฐานข้อมูล
 
 ============  PRODUCT Insert    ============ */
-Admin.post('/product', function (req, res) {
+Admin.post('/product',authorize, function (req, res) {
     let product = req.body.product;
     console.log(product);
 
@@ -133,7 +136,7 @@ Admin.post('/product', function (req, res) {
     });
 });
 // ==  PRODUCT Update    == 
-Admin.put('/product', function (req, res) {
+Admin.put('/product',authorize, function (req, res) {
     let ProductID = req.body.ProductID;
     let product = req.body.product;
 
@@ -153,7 +156,7 @@ Admin.put('/product', function (req, res) {
     });
 });
 // ==  PRODUCT Delete    == 
-Admin.delete('/product', function (req, res) {
+Admin.delete('/product',authorize, function (req, res) {
     let ProductID = req.body.ProductID;
 
     if (!ProductID) {
@@ -172,7 +175,7 @@ Admin.delete('/product', function (req, res) {
     });
 });
 // == PRODUCT Select    == 
-Admin.get('/product/:id', function (req, res) {
+Admin.get('/product/:id',authorize, function (req, res) {
     let ProductID = req.params.id;
 
     if (!ProductID) {
@@ -198,7 +201,7 @@ Admin.get('/product/:id', function (req, res) {
     });
 });
 // ==  PRODUCT Select all    == 
-Admin.get('/products', function (req, res) {
+Admin.get('/products',authorize, function (req, res) {
     connection.query("SELECT * FROM product", function (error, results) {
         if (error) throw error;
         return res.send({
@@ -209,7 +212,7 @@ Admin.get('/products', function (req, res) {
     });
 });
 // ============  ADMIN + USER Insert    ============
-Admin.post('/userAdmin', (req, res) => {
+Admin.post('/userAdmin',authorize, (req, res) => {
     let { user, admin } = req.body;
     console.log(user, admin);
 
@@ -236,7 +239,7 @@ Admin.post('/userAdmin', (req, res) => {
     });
 });
 // ==  ADMIN + USER Update    == 
-Admin.put('/userAdmin', function (req, res) {
+Admin.put('/userAdmin',authorize, function (req, res) {
     let { user, admin } = req.body;
 
     if (!user || !user.UserID || !admin || !admin.AdminID) {
@@ -258,7 +261,7 @@ Admin.put('/userAdmin', function (req, res) {
     });
 });
 // ==  ADMIN + USER Delete    == 
-Admin.delete('/userAdmin', function (req, res) {
+Admin.delete('/userAdmin',authorize, function (req, res) {
     let { UserID, AdminID } = req.body;
 
     if (!UserID || !AdminID) {
@@ -281,7 +284,7 @@ Admin.delete('/userAdmin', function (req, res) {
     });
 });
 // ==  ADMIN + USER Select    == 
-Admin.get('/userAdmin/:id', function (req, res) {
+Admin.get('/userAdmin/:id',authorize, function (req, res) {
     let UserID = req.params.id;
 
     if (!UserID) {
@@ -318,7 +321,7 @@ Admin.get('/userAdmin/:id', function (req, res) {
     );
 });
 // ==  ADMIN + USER Select all   ==
-Admin.get('/userAdmins', function (req, res) {
+Admin.get('/userAdmins',authorize, function (req, res) {
     connection.query(
         `SELECT u.UserID, u.Username, u.U_Password, u.LoginTimestamp, u.User_Image, 
                 a.AdminID, a.FirstName, a.LastName, a.PhoneNumber, a.Address, a.Email
@@ -338,13 +341,13 @@ Admin.get('/userAdmins', function (req, res) {
 /* --------------------------*/
 //เส้นทางในการเข้าสู่ระบบ (สร้างtoken)
 
-Admin.post("/signin", (req, res) => {
+Admin.post("/signin",authorize, (req, res) => {
     console.log(req.body);
 
     let { username, password } = req.body;
 
     connection.query(
-        "SELECT * FROM user WHERE Username = ? AND U_Password = ?",
+        "SELECT * FROM user WHERE Username = ? AND password = ?",
         [username, password],
         (error, results) => {
             if (error) return res.status(500).json({ error: "Database error" });
@@ -370,6 +373,7 @@ Admin.post("/signin", (req, res) => {
         }
     );
 });
+
 /* --------------------------*/
 // Run Server 
 app.listen(process.env.PORT, function () {
