@@ -1,7 +1,7 @@
-// import { callWS } from '/client_js/callWS.js';
-const callWS = require("/client_js/callWS.js");
+import { callUserAdminWS } from "/client_js/callUserAdminWS.js";
+import { getCookie } from '/client_js/getCookie.js';  
 
-function togglePassword() {
+export function togglePassword() {
     const passwordInput = document.getElementById('password');
     const eyeIcon = document.getElementById('eye-icon');
 
@@ -14,23 +14,27 @@ function togglePassword() {
     }
 }
 
-function handleLogin() {
+export async function handleLogin() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     const loginButton = document.getElementById('login-button');
-    
-    loginButton.disabled = true;
-
     let user_data = { username, password };
+    loginButton.disabled = true; //ป้องกันไม่ให้คลิกซ้ำ
+    
+    const token = getCookie('token'); // ใช้ token ที่ได้จาก getCookie
+    console.log('Token from cookie:', token);
+    const errorMessage = document.getElementById('error-message');
+    errorMessage.style.display = 'none'; 
 
-    callWS("http://localhost:3001/signin", "signin", '', user_data).then((data) => {
+
+    callUserAdminWS("signin", token, user_data).then((data) => {
         console.log(data);
         if (data.token) {
+            errorMessage.style.display = 'none';
             document.cookie = `token=${data.token}; path=/; max-age=3600; Secure; HttpOnly`;
-
             window.location.href = '/LoginSuccess'; 
         } else {
-            alert("Login failed, please check your credentials.");
+            errorMessage.style.display = 'block';
         }
     }).catch((error) => {
         console.error("Error during login", error);
@@ -38,6 +42,8 @@ function handleLogin() {
         loginButton.disabled = false;
     });
 }
+
+
 document.addEventListener('DOMContentLoaded', () => {
     const eyeIcon = document.getElementById('eye-icon');
     const loginButton = document.getElementById('login-button');
@@ -49,6 +55,3 @@ document.addEventListener('DOMContentLoaded', () => {
         loginButton.addEventListener('click', handleLogin);  
     }
 });
-
-export { togglePassword, handleLogin };
-

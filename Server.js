@@ -4,20 +4,21 @@ const dotenv = require('dotenv');
 const path = require('path')
 const cors = require('cors');
 const mysql = require('mysql2');
-const cookieParser = require('cookie-parser');
 const authorize = require("./middleware/auth");
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
+
 
 /* --------------------------*/
 dotenv.config();
 const app = express();
 const Admin = express.Router();
+app.use(cookieParser());
 
 /* --------------------------*/
 // ใช้ middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 
 /* --------------------------*/
 // เชื่อมต่อฐานข้อมูล
@@ -38,12 +39,14 @@ connection.connect(function (err) {
 /* --------------------------*/
     // ตั้งค่าเส้นทาง static
 app.use('/', express.static(path.join(__dirname, 'public')));
+
+
 /* --------------------------*/
 
 /* CORS */
 let corsOptions = {
     origin: 'http://localhost:3001', // โดเมนที่อนุญาต
-    methods: 'GET,POST,PUT,DELETE' // เมธอดที่อนุญาต
+    methods: 'GET,POST,PUT,DELETE', // เมธอดที่อนุญาต
 
 };
 app.use(cors(corsOptions));
@@ -175,7 +178,7 @@ Admin.delete('/product',authorize, function (req, res) {
     });
 });
 // == PRODUCT Select    == 
-Admin.get('/product/:id',authorize, function (req, res) {
+Admin.get('/product/:id', function (req, res) {
     let ProductID = req.params.id;
 
     if (!ProductID) {
@@ -201,7 +204,7 @@ Admin.get('/product/:id',authorize, function (req, res) {
     });
 });
 // ==  PRODUCT Select all    == 
-Admin.get('/products',authorize, function (req, res) {
+Admin.get('/products', function (req, res) {
     connection.query("SELECT * FROM product", function (error, results) {
         if (error) throw error;
         return res.send({
@@ -341,16 +344,17 @@ Admin.get('/userAdmins',authorize, function (req, res) {
 /* --------------------------*/
 //เส้นทางในการเข้าสู่ระบบ (สร้างtoken)
 
-Admin.post("/signin",authorize, (req, res) => {
+Admin.post("/signin", (req, res) => {
     console.log(req.body);
 
     let { username, password } = req.body;
 
     connection.query(
-        "SELECT * FROM user WHERE Username = ? AND password = ?",
+        "SELECT * FROM user WHERE Username = ? AND U_Password = ?",
         [username, password],
         (error, results) => {
-            if (error) return res.status(500).json({ error: "Database error" });
+            if (error)
+                return res.status(500).json({ error: "Database error" });
             if (results.length === 0) {
                 return res.status(401).json({ error: "Invalid username or password" });
             }
@@ -359,16 +363,9 @@ Admin.post("/signin",authorize, (req, res) => {
                 process.env.SECRET,
                 { expiresIn: "1h" } // 1 ชม. หมดอายุ
             );
-            // เก็บ token ไว้ใน cookie
-            res.cookie('token', jwtToken, {
-                httpOnly: true,  // ป้องกันการเข้าถึงจาก JavaScript
-                secure: process.env.NODE_ENV === 'production', // ใช้เฉพาะใน HTTPS
-                sameSite: 'Strict', // ป้องกันการโจมตี CSRF
-                maxAge: 3600000 // 1 ชม. คุกกี้หมดอายุ
-            });
-
             res.status(200).json({
-                message: "Login successful"
+                message: "Login successful",
+                token: jwtToken
             });
         }
     );
