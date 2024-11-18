@@ -17,5 +17,6 @@ export async function callUserAdminWS(method, token = "", sentData = {}) {
             });
             data = await response.json();
     }
+    
     return data;
 }

@@ -18,12 +18,20 @@ export async function handleLogin() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     const loginButton = document.getElementById('login-button');
+    const errorMessage = document.getElementById('error-message');
+
+    
+    if (!username || !password) {
+        errorMessage.style.display = 'block';
+        errorMessage.textContent = "Enter username and password.";
+        return;
+    }
+    loginButton.disabled = true;
+    errorMessage.style.display = 'none';  
     let user_data = { username, password };
-    loginButton.disabled = true; //ป้องกันไม่ให้คลิกซ้ำ
     
     const token = getCookie('token'); // ใช้ token ที่ได้จาก getCookie
     console.log('Token from cookie:', token);
-    const errorMessage = document.getElementById('error-message');
     errorMessage.style.display = 'none'; 
 
 

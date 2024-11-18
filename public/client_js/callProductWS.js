@@ -1,5 +1,7 @@
 const rootURL = "http://localhost:3001";
 
+
+//ไม่ใช้ token
 export async function callProductWS(url, method) {
     let data;
     const fullURL = new URL(url, rootURL);
@@ -15,6 +17,7 @@ export async function callProductWS(url, method) {
             });
 
             data = await response.json();
+
     }
     return data;
 }
