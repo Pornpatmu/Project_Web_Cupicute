@@ -20,35 +20,46 @@ export async function handleLogin() {
     const loginButton = document.getElementById('login-button');
     const errorMessage = document.getElementById('error-message');
 
-    
+    // ตรวจสอบว่าผู้ใช้กรอก username และ password หรือไม่
     if (!username || !password) {
         errorMessage.style.display = 'block';
         errorMessage.textContent = "Enter username and password.";
         return;
     }
-    loginButton.disabled = true;
+
+    loginButton.disabled = true;  
     errorMessage.style.display = 'none';  
+
     let user_data = { username, password };
-    
-    const token = getCookie('token'); // ใช้ token ที่ได้จาก getCookie
-    console.log('Token from cookie:', token);
-    errorMessage.style.display = 'none'; 
 
+    const token = getCookie('token'); 
 
-    callUserAdminWS("signin", token, user_data).then((data) => {
+    if (token) {
+        errorMessage.style.display = 'block';
+        errorMessage.textContent = "You are already logged in.";
+        loginButton.disabled = false;  
+        return;
+    }
+
+    try {
+        const data = await callUserAdminWS("signin", token, user_data);
         console.log(data);
+
         if (data.token) {
-            errorMessage.style.display = 'none';
+            errorMessage.style.display = 'none';  
             document.cookie = `token=${data.token}; path=/; max-age=3600; Secure; HttpOnly`;
-            window.location.href = '/LoginSuccess'; 
+            window.location.href = '/LoginSuccess';  
         } else {
             errorMessage.style.display = 'block';
+            errorMessage.textContent = "Login failed. Please try again.";
         }
-    }).catch((error) => {
-        console.error("Error during login", error);
-    }).finally(() => {
+    } catch (error) {
+        console.error("Error during login:", error);
+        errorMessage.style.display = 'block';
+        errorMessage.textContent = "An error occurred during login. Please try again later.";
+    } finally {
         loginButton.disabled = false;
-    });
+    }
 }
 
 

@@ -6,6 +6,7 @@ export async function callProductWS(url, method) {
     let data;
     const fullURL = new URL(url, rootURL);
 
+    try {
     let response;
     switch (method) {
         case "getProducts":
@@ -17,7 +18,14 @@ export async function callProductWS(url, method) {
             });
 
             data = await response.json();
+            console.log(data);
+            break;
 
+            default:
+                throw new Error("Method not supported.");
+        }
+    } catch (error) {
+        console.error("Error in callProductWS:", error.message);
     }
     return data;
 }
