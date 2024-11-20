@@ -1,0 +1,92 @@
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.user-table-header {
+    display: grid;
+    grid-template-columns: 50px 120px 170px 170px 190px 270px 200px 120px; 
+    background-color: #FFCEE4;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 12px 10px;
+    text-align: left;
+    align-items: center;
+}
+
+.user-table-row {
+    display: grid;
+    grid-template-columns: 50px 120px 170px 170px 190px 270px 200px 120px; 
+    align-items: center;
+    font-size: 14px;
+    background-color: white;
+    padding: 12px 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.user-table-row:last-child {
+    border-bottom: none;
+}
+
+.user-table-row:hover {
+    background-color: #f9f9f9;
+}
+
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: auto;
+}
+
+.user-table-header div,
+.user-table-row div {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-table-header div:nth-child(3),
+.user-table-row div:nth-child(3) {
+    white-space: normal; /* Allow wrapping for Email column */
+    overflow: visible;   /* Ensure content is fully visible */
+    word-wrap: break-word; /* Break long words to fit */
+}
+
+/* Flex container for the Edit and Delete buttons */
+.action-btns {
+    display: flex;
+    gap: 8px; /* Space between the buttons */
+    justify-content: flex-start;
+}
+
+.edit-btn, .delete-btn {
+    cursor: pointer;
+    font-size: 5px;
+    color: #333;
+    text-align: center;
+}
+
+.edit-btn img, .delete-btn img {
+    width: 16px; 
+    height: 16px;
+}
+
+.edit-btn:hover, .delete-btn:hover {
+    color: #007bff;
+}
+
+/* Optional styling for the Last Active column */
+.last-active {
+    font-style: italic;
+    color: #666;
+}
+.profile{
+    margin-right: 10px;
+}

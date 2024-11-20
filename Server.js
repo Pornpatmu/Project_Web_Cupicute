@@ -47,6 +47,7 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 let corsOptions = {
     origin: 'http://localhost:3001', // โดเมนที่อนุญาต
     methods: 'GET,POST,PUT,DELETE', // เมธอดที่อนุญาต
+    credentials: true, // อนุญาตให้ส่ง cookies
 
 };
 app.use(cors(corsOptions));
@@ -58,7 +59,7 @@ app.use('/', Admin);
 app.use((req, res, next) => {
     res.status(404).send('Page Not Found');
 });
-// Errorต่างๆ
+// Error
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something went wrong!');
@@ -87,57 +88,62 @@ Admin.get('/Detail', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', '/html/Detail.html'));
 });
 /* --------------------------*/
-Admin.get('/LoginSuccess', (req, res) => {
+Admin.get('/LoginSuccess', authorize,(req, res) => {
     console.log('Request at /LoginSuccess');
     res.sendFile(path.join(__dirname, 'public', '/html/LoginSuccess.html'));
 });
 Admin.get('/Product', (req, res) => {
-    console.log('Request at /Product');
-    res.sendFile(path.join(__dirname, 'public', '/html/Product.html'));
+    console.log('Request at /Product1');
+    res.sendFile(path.join(__dirname, 'public', '/html/Product1.html'));
 });
 Admin.get('/ProductAdd', (req, res) => {
     console.log('Request at /ProductAdd');
-    res.sendFile(path.join(__dirname, 'public', '/html/ProductAdd.html'));
+    res.sendFile(path.join(__dirname, 'public', '/html/ProductAdd1.html'));
 });
-Admin.get('/ProductEdit', (req, res) => {
+Admin.get('/Product_view', (req, res) => {
     console.log('Request at /ProductEdit');
-    res.sendFile(path.join(__dirname, 'public', '/html/ProductEdit.html'));
-});
-Admin.get('/User', (req, res) => {
-    console.log('Request at /User');
     res.sendFile(path.join(__dirname, 'public', '/html/Product.html'));
 });
-Admin.get('/UserAdd', (req, res) => {
-    console.log('Request at /UserAdd');
-    res.sendFile(path.join(__dirname, 'public', '/html/UserAdd.html'));
+Admin.get('/Admin', (req, res) => {
+    console.log('Request at /Admin');
+    res.sendFile(path.join(__dirname, 'public', '/html/Admin.html'));
 });
-Admin.get('/UserEdit', (req, res) => {
-    console.log('Request at /UserEdit');
-    res.sendFile(path.join(__dirname, 'public', '/html/UserEdit.html'));
+Admin.get('/AdminAdd', (req, res) => {
+    console.log('Request at /AdminAdd');
+    res.sendFile(path.join(__dirname, 'public', '/html/AdminAdd.html'));
+});
+Admin.get('/AdminEdit', (req, res) => {
+    console.log('Request at /AdminEdit');
+    res.sendFile(path.join(__dirname, 'public', '/html/AdminEdit.html'));
 });
 /* --------------------------*/
 /* กำหนดเส้นทางสำหรับการดึงข้อมูลจากฐานข้อมูล
 
 ============  PRODUCT Insert    ============ */
-Admin.post('/product',authorize, function (req, res) {
-    let product = req.body.product;
-    console.log(product);
+Admin.post('/product', function (req, res) {
+    let product = req.body;
 
+    const {productId,productName,price,description,category} = req.body;
+    console.log(productId);
     if (!product) {
         return res.status(400).send({
             error: true,
             message: 'Please provide Product information'
         });
     }
-    connection.query("INSERT INTO personal_info SET ?", product, function (error, results) {
+    console.log('Received categoryID:', category);
+    const value = [productId,productName,price,description,category]
+    console.log(value)
+    connection.query("INSERT INTO product (ProductID,ProductName,Price,P_Description,CategoryID) VALUES (?,?,?,?,?)", value, function (error, results) {
         if (error) throw error;
-        return res.send({
+        return res.status(200).send({
             error: false,
-            data: results.affectedRows,
+            data: results,
             message: 'New Product has been created successfully'
         });
     });
 });
+
 // ==  PRODUCT Update    == 
 Admin.put('/product',authorize, function (req, res) {
     let ProductID = req.body.ProductID;
@@ -287,7 +293,7 @@ Admin.delete('/userAdmin',authorize, function (req, res) {
     });
 });
 // ==  ADMIN + USER Select    == 
-Admin.get('/userAdmin/:id',authorize, function (req, res) {
+Admin.get('/userAdmin/:id', function (req, res) {
     let UserID = req.params.id;
 
     if (!UserID) {
@@ -324,7 +330,7 @@ Admin.get('/userAdmin/:id',authorize, function (req, res) {
     );
 });
 // ==  ADMIN + USER Select all   ==
-Admin.get('/userAdmins',authorize, function (req, res) {
+Admin.get('/userAdmins', function (req, res) {
     connection.query(
         `SELECT u.UserID, u.Username, u.U_Password, u.LoginTimestamp, u.User_Image, 
                 a.AdminID, a.FirstName, a.LastName, a.PhoneNumber, a.Address, a.Email
@@ -361,8 +367,10 @@ Admin.post("/signin", (req, res) => {
             let jwtToken = jwt.sign(
                 { user: username },
                 process.env.SECRET,
-                { expiresIn: "1h" } // 1 ชม. หมดอายุ
+                { expiresIn: "1m" } // 1 ชม. หมดอายุ
             );
+            // ส่ง token กลับไปใน cookie
+            res.cookie('token', jwtToken, { httpOnly: true, secure: false });  
             res.status(200).json({
                 message: "Login successful",
                 token: jwtToken
@@ -370,7 +378,18 @@ Admin.post("/signin", (req, res) => {
         }
     );
 });
+//เส้นทางในการออกจากระบบ (ลบtoken)
+Admin.post('/logout', (req, res) => {
+    // ลบ token ออกจาก cookies
+    res.clearCookie('token', { 
+        httpOnly: true, 
+        secure: process.env.NODE_ENV === 'production', 
+        sameSite: 'Strict' 
+    });
 
+    // ส่งการตอบกลับกลับไป
+    res.json({ message: 'Logout successful' });
+});
 /* --------------------------*/
 // Run Server 
 app.listen(process.env.PORT, function () {

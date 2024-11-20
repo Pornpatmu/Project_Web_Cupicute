@@ -1,6 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <body>
     <H1> Welcome! </H1>
+    <button type="button" id="logout-button">Logout</button>
+
+    <script type ="module">
+        import { callUserAdminWS } from "/client_js/callUserAdminWS.js";
+        async function handleLogout() {
+            try {
+                const data = await callUserAdminWS("logout");  
+                console.log(data);  
+                window.location.href = '/';
+            } catch (error) {
+                console.error("Logout failed:", error);  
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoutButton = document.getElementById('logout-button');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', handleLogout);
+            }
+        });
+    </script>
 
 </body>
+
+</html>

@@ -145,7 +145,7 @@ body {
 }
 
 /*  new-product-section */
-/* 
+
 .new-product-section {
   font-family: 'Staatliches';
   display: flex;
@@ -220,11 +220,11 @@ body {
   font-size: 20px;
   top: -10px;
 
-} */
+} 
 
 /*  product-section */
 
-/* .product-section {
+ .product-section {
   font-family: 'Staatliches';
   display: flex;
   gap: 18px;
@@ -234,4 +234,4 @@ body {
   margin: 230px auto ;
   width: 70%;
   border-radius: 20px;
-} */
+} 

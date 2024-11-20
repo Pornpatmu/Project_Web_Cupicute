@@ -1,0 +1,221 @@
+/* Reset ค่าเริ่มต้น */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* รูปแบบของ body */
+body {
+    font-family: 'Konkhmer Sleokchher';
+    background-color: #f5f5f5;
+}
+
+/* Navigation Sidebar */
+.navbar {
+    width: 200px;
+    height: 100vh;
+    background-color: #FFCEE4;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+}
+
+.logo {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.logo img {
+    width: 200px;
+    height: auto;
+}
+
+/* Menu Styling */
+.menu {
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+}
+
+.menu li {
+    width: 100%;
+}
+
+.menu li a {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    text-align: left;
+    padding: 15px 0;
+    text-decoration: none;
+    color: #FF3992;
+    font-size: 22px;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.menu li a:hover {
+    background-color: #ffe2eb;
+}
+
+/* รูปแบบวงกลมสำหรับไอคอน */
+.icon-background {
+    width: 35px;
+    height: 35px;
+    background-color: #FF3992;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+
+.menu-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Main Content Area */
+.main-content {
+    margin-left: 200px;
+    padding: 20px;
+    background-color: rgb(255, 255, 255);
+    min-height: 100vh;
+}
+
+/* รูปภาพโปรไฟล์ */
+.profile-pic {
+    width: 25px;
+    height: auto;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+.edit-btn,
+.delete-btn {
+    display: inline-block;
+    padding: 5px;
+}
+
+.edit-btn img,
+.delete-btn img {
+    cursor: pointer;
+}
+
+header h1 {
+    font-size: 24px;
+}
+
+/* ส่วนซ้ายของ Header */
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.header-left img {
+    width: 40px;
+    height: auto;
+    margin-right: 20px;
+}
+
+.header-left h1 {
+    margin: 0;
+}
+
+/* ส่วนขวาของ Header */
+header .header-right {
+    display: flex;
+    align-items: center;
+}
+
+header .header-right span {
+    margin-right: 10px;
+}
+
+.header-right img {
+    width: 15px;
+    height: auto;
+    margin-left: auto;
+}
+
+/* ปุ่ม Logout */
+header .logout-btn {
+    color: black;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.header-container {
+    display: flex;
+    justify-self: flex-end;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.add-new-btn {
+    background-color: #D9D9D9;
+    color: black;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 2px;
+    cursor: pointer;
+    font-size: 16px;
+    float: right;
+    display: flex; 
+    align-items: center; 
+}
+
+.add-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    background-color: #e0e0e0;
+    border-radius: 30px;
+    padding: 10px;
+    margin-right: 10px;
+}
+
+.search-input {
+    border: none;
+    background-color: transparent;
+    outline: none;
+    width: 200px;
+    padding-left: 10px;
+    font-size: 16px;
+}
+
+.search-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
