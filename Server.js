@@ -92,29 +92,29 @@ Admin.get('/LoginSuccess', authorize,(req, res) => {
     console.log('Request at /LoginSuccess');
     res.sendFile(path.join(__dirname, 'public', '/html/LoginSuccess.html'));
 });
-Admin.get('/Product', (req, res) => {
-    console.log('Request at /Product1');
-    res.sendFile(path.join(__dirname, 'public', '/html/Product1.html'));
+Admin.get('/Product_view', (req, res) => {
+    console.log('Request at /Product');
+    res.sendFile(path.join(__dirname, 'public', '/html/Product.html'));
 });
 Admin.get('/ProductAdd', (req, res) => {
     console.log('Request at /ProductAdd');
-    res.sendFile(path.join(__dirname, 'public', '/html/ProductAdd1.html'));
+    res.sendFile(path.join(__dirname, 'public', '/html/ProductAdd.html'));
 });
-Admin.get('/Product_view', (req, res) => {
+Admin.get('/ProductEdit', (req, res) => {
     console.log('Request at /ProductEdit');
+    res.sendFile(path.join(__dirname, 'public', '/html/ProductEdit.html'));
+});
+Admin.get('/User', (req, res) => {
+    console.log('Request at /User');
     res.sendFile(path.join(__dirname, 'public', '/html/Product.html'));
 });
-Admin.get('/Admin', (req, res) => {
-    console.log('Request at /Admin');
-    res.sendFile(path.join(__dirname, 'public', '/html/Admin.html'));
+Admin.get('/UserAdd', (req, res) => {
+    console.log('Request at /UserAdd');
+    res.sendFile(path.join(__dirname, 'public', '/html/UserAdd.html'));
 });
-Admin.get('/AdminAdd', (req, res) => {
-    console.log('Request at /AdminAdd');
-    res.sendFile(path.join(__dirname, 'public', '/html/AdminAdd.html'));
-});
-Admin.get('/AdminEdit', (req, res) => {
-    console.log('Request at /AdminEdit');
-    res.sendFile(path.join(__dirname, 'public', '/html/AdminEdit.html'));
+Admin.get('/UserEdit', (req, res) => {
+    console.log('Request at /UserEdit');
+    res.sendFile(path.join(__dirname, 'public', '/html/UserEdit.html'));
 });
 /* --------------------------*/
 /* กำหนดเส้นทางสำหรับการดึงข้อมูลจากฐานข้อมูล
@@ -143,7 +143,6 @@ Admin.post('/product', function (req, res) {
         });
     });
 });
-
 // ==  PRODUCT Update    == 
 Admin.put('/product',authorize, function (req, res) {
     let ProductID = req.body.ProductID;
@@ -293,7 +292,7 @@ Admin.delete('/userAdmin',authorize, function (req, res) {
     });
 });
 // ==  ADMIN + USER Select    == 
-Admin.get('/userAdmin/:id', function (req, res) {
+Admin.get('/userAdmin/:id',authorize, function (req, res) {
     let UserID = req.params.id;
 
     if (!UserID) {
@@ -330,7 +329,7 @@ Admin.get('/userAdmin/:id', function (req, res) {
     );
 });
 // ==  ADMIN + USER Select all   ==
-Admin.get('/userAdmins', function (req, res) {
+Admin.get('/userAdmins',authorize, function (req, res) {
     connection.query(
         `SELECT u.UserID, u.Username, u.U_Password, u.LoginTimestamp, u.User_Image, 
                 a.AdminID, a.FirstName, a.LastName, a.PhoneNumber, a.Address, a.Email
@@ -367,10 +366,8 @@ Admin.post("/signin", (req, res) => {
             let jwtToken = jwt.sign(
                 { user: username },
                 process.env.SECRET,
-                { expiresIn: "1m" } // 1 ชม. หมดอายุ
+                { expiresIn: "1h" } // 1 ชม. หมดอายุ
             );
-            // ส่ง token กลับไปใน cookie
-            res.cookie('token', jwtToken, { httpOnly: true, secure: false });  
             res.status(200).json({
                 message: "Login successful",
                 token: jwtToken
@@ -378,18 +375,7 @@ Admin.post("/signin", (req, res) => {
         }
     );
 });
-//เส้นทางในการออกจากระบบ (ลบtoken)
-Admin.post('/logout', (req, res) => {
-    // ลบ token ออกจาก cookies
-    res.clearCookie('token', { 
-        httpOnly: true, 
-        secure: process.env.NODE_ENV === 'production', 
-        sameSite: 'Strict' 
-    });
 
-    // ส่งการตอบกลับกลับไป
-    res.json({ message: 'Logout successful' });
-});
 /* --------------------------*/
 // Run Server 
 app.listen(process.env.PORT, function () {
