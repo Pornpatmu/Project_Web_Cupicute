@@ -4,8 +4,7 @@ const dotenv = require('dotenv');
 const path = require('path')
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
-const cors = require('cors');
-const authorize = require("../Server-back/middleware/auth.js");
+// const authorize = require("../Server-back/middleware/auth.js");
 
 
 /* --------------------------*/
@@ -23,18 +22,6 @@ app.use(express.urlencoded({ extended: true }));
 /* --------------------------*/
     // ตั้งค่าเส้นทาง static
 app.use('/', express.static(path.join(__dirname, 'public')));
-
-
-/* --------------------------*/
-
-/* CORS */
-let corsOptions = {
-    origin: 'http://localhost:3001', // โดเมนที่อนุญาต
-    methods: 'GET,POST,PUT,DELETE', // เมธอดที่อนุญาต
-    credentials: true, // อนุญาตให้ส่ง cookies
-
-};
-app.use(cors(corsOptions));
 
 /* --------------------------*/
 app.use('/', Admin);
@@ -72,7 +59,7 @@ Admin.get('/Detail', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', '/html/Detail.html'));
 });
 /* --------------------------*/
-Admin.get('/LoginSuccess', authorize,(req, res) => {
+Admin.get('/LoginSuccess',(req, res) => {
     console.log('Request at /LoginSuccess');
     res.sendFile(path.join(__dirname, 'public', '/html/LoginSuccess.html'));
 });
@@ -102,35 +89,7 @@ Admin.get('/AdminEdit', (req, res) => {
 });
 
 /* --------------------------*/
-//เส้นทางในการเข้าสู่ระบบ (สร้างtoken)
-Admin.post("/signin", (req, res) => {
-    console.log(req.body);
 
-    let { username, password } = req.body;
-
-    connection.query(
-        "SELECT * FROM user WHERE Username = ? AND U_Password = ?",
-        [username, password],
-        (error, results) => {
-            if (error)
-                return res.status(500).json({ error: "Database error" });
-            if (results.length === 0) {
-                return res.status(401).json({ error: "Invalid username or password" });
-            }
-            let jwtToken = jwt.sign(
-                { user: username },
-                process.env.SECRET,
-                { expiresIn: "1h" } // 1 ชม. หมดอายุ
-            );
-            res.status(200).json({
-                message: "Login successful",
-                token: jwtToken
-            });
-        }
-    );
-});
-
-/* --------------------------*/
 // Run Server 
 app.listen(process.env.PORT, function () {
     console.log(`Server is running on port: ${process.env.PORT}`);

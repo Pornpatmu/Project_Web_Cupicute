@@ -6,6 +6,8 @@ const mysql = require('mysql2');
 const authorize = require("./middleware/auth");
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
+
 
 
 /* --------------------------*/
@@ -20,6 +22,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 /* --------------------------*/
+
+/* CORS */
+let corsOptions = {
+    origin: 'http://localhost:3001', // โดเมนที่อนุญาต
+    methods: 'GET,POST,PUT,DELETE', // เมธอดที่อนุญาต
+    credentials: true, // อนุญาตให้ส่ง cookies
+
+};
+app.use(cors(corsOptions));
+
+/* --------------------------*/
+
 // เชื่อมต่อฐานข้อมูล
 const connection = mysql.createConnection({
     host: process.env.DB_HOST,
@@ -277,6 +291,35 @@ Admin.get('/userAdmins',authorize, function (req, res) {
         }
     );
 });
+/* --------------------------*/
+//เส้นทางในการเข้าสู่ระบบ (สร้างtoken)
+Admin.post("/signin", (req, res) => {
+    console.log(req.body);
+
+    let { username, password } = req.body;
+
+    connection.query(
+        "SELECT * FROM user WHERE Username = ? AND U_Password = ?",
+        [username, password],
+        (error, results) => {
+            if (error)
+                return res.status(500).json({ error: "Database error" });
+            if (results.length === 0) {
+                return res.status(401).json({ error: "Invalid username or password" });
+            }
+            let jwtToken = jwt.sign(
+                { user: username },
+                process.env.SECRET,
+                { expiresIn: "1h" } // 1 ชม. หมดอายุ
+            );
+            res.status(200).json({
+                message: "Login successful",
+                token: jwtToken
+            });
+        }
+    );
+});
+
 
 /* --------------------------*/
 // Run Server 

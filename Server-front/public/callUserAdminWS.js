@@ -1,4 +1,4 @@
-const rootURL = "http://localhost:3001";
+const rootURL = "http://localhost:3002";
 
 export async function callUserAdminWS(method, sentData = {}) {
     let data;
