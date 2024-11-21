@@ -1,8 +1,8 @@
-const rootURL = "http://localhost:3001";
+const rootURL = "http://localhost:3002";
 
 
 //ไม่ใช้ token
-export async function callProductWS(url, method) {
+export async function callProductWS(url, method, productData) { 
     let data;
     const fullURL = new URL(url, rootURL);
 
@@ -27,7 +27,7 @@ export async function callProductWS(url, method) {
                         'Accept': 'application/json',
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(bodyData),
+                    body: JSON.stringify(productData),
 
                 });
 
@@ -40,7 +40,7 @@ export async function callProductWS(url, method) {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(bodyData),
+                    body: JSON.stringify(data),
                 });
                 break;
 
