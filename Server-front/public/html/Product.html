@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="/css/Product.css">
+    <link rel="stylesheet" href="/css/components2.css">
+    <!-- <script src="/client_js/function/Product.js"></script> -->
+
+</head>
+
+<body>
+    <!-- Navigation Sidebar -->
+    <div class="navbar">
+        <div class="logo">
+            <img src="/images/Normal_page/Logo.png" alt="CupiCute Logo">
+        </div>
+        <ul class="menu">
+            <li>
+                <a href="/">
+                    <div class="icon-background">
+                        <img class="menu-icon" src="/images/Normal_page/house-solid.svg" alt="Home Icon">
+                    </div>
+                    <i class="fa fa-home"></i> Home
+                </a>
+            </li>
+            <li>
+                <a href="/Product_view">
+                    <div class="icon-background">
+                        <img class="menu-icon" src="/images/Normal_page/bag-shopping-solid.svg" alt="Product Icon">
+                    </div>
+                    <i class="fa fa-pr"></i> Product Management
+                </a>
+            </li>
+            <li>
+                <a href="/Admin">
+                    <div class="icon-background">
+                        <img class="menu-icon" src="/images/Normal_page/user-large-solid.svg" alt="User Icon">
+                    </div>
+                    <i class="fa fa-users"></i> User Management
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header>
+            <div class="header-left">
+                <img src="/images/Normal_page/bag-shopping-solid-pink.svg" alt="Product Icon">
+                <h1>Product Management</h1>
+            </div>
+            <div class="header-right">
+                <img src="/images/Normal_page/circle-user-regular.svg" alt="User Image">
+                <span>USERNAME</span>
+                <img src="/images/Normal_page/right-to-bracket-solid.svg" alt="Logout_Icon">
+                <a href="#" class="logout-btn">Log out</a>
+            </div>
+        </header>
+
+        <div class="header-container">
+            <div class="search-container">
+                <img src="/images/Normal_page/magnifying-glass-solid.svg" alt="Search Icon" class="search-icon">
+                <input type="text" class="search-input">
+            </div>
+            <a href="/ProductAdd" class="add-new-btn">
+                <img src="/images/Normal_page/plus-solid.svg" alt="Add Icon" class="add-icon" >
+                ADD NEW
+            </a>
+        </div>
+
+
+        <!-- <div class="product-table">
+            <div class="product-table-header">
+                <div></div>
+                <div id="pro_ID" >Product ID</div>
+                <div id="pro_name">Product Name</div>
+                <div id="pro_price">Price</div>
+                <div id="pro_category">Category</div>
+                <div id="pro_description">Description</div>
+            </div>
+        </div> -->
+
+        <div class="product-table">
+            <div class="product-table-header">
+                <div>Image</div>
+                <div id="pro_ID">Product ID</div>
+                <div id="pro_name">Product Name</div>
+                <div id="pro_price">Price</div>
+                <div id="pro_category">Category</div>
+                <div id="pro_description">Description</div>
+                <div>Actions</div>
+            </div>
+        </div>
+        
+      
+        <div class="product-table-row">
+            <div><img class="profile-pic" src="/images/Normal_page/circle-user-regular.svg" alt="User Image"></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div>
+                <a href="#" class="edit-btn">
+                    <img src="/images/Normal_page/pen-solid.svg" alt="Edit" class="icon">
+                </a>
+                <a href="#" class="delete-btn">
+                    <img src="/images/Normal_page/trash-can-solid.svg" alt="Delete" class="icon">
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ---------------Json-------------------- -->
+    <script>
+        // รอจนกว่า DOM ทั้งหมดจะโหลดเสร็จ
+document.addEventListener('DOMContentLoaded', async () => {
+    const productTableContainer = document.querySelector('.product-table'); // เลือก container สำหรับแสดงสินค้า
+
+    /**
+     * ฟังก์ชันสำหรับเรียก API โดยใช้ callProductWS
+     * @param {string} endpoint - endpoint ของ API
+     * @param {string} methodName - ชื่อเมธอดที่ใช้ใน callProductWS
+     * @returns {Promise<Array>} - คืนค่าเป็นอาร์เรย์ของสินค้า
+     */
+    async function callProductWS(endpoint, methodName) {
+        try {
+            const response = await fetch(`http://localhost:3000/api${endpoint}`, {
+                method: 'POST', // สมมติว่า callProductWS ใช้ POST
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ method: methodName }) // ส่ง methodName ไปกับ request
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json(); // แปลง JSON response เป็น JavaScript Object
+            return data.products || []; // คืนค่า products (หรือ array ว่างถ้าไม่มีสินค้า)
+        } catch (error) {
+            console.error('Error in callProductWS:', error);
+            throw error; // โยน error กลับไป
+        }
+    }
+
+    /**
+     * ฟังก์ชันโหลดสินค้าและแสดงในหน้าเว็บ
+     */
+    async function loadProducts() {
+        try {
+            // ดึงข้อมูลสินค้า
+            const products = await callProductWS('/products', 'getProducts');
+
+            // ล้างข้อมูลเดิมในตารางสินค้า
+            document.querySelectorAll('.product-table-row:not(.product-table-header)').forEach(row => row.remove());
+
+            // เช็กว่ามีสินค้าในฐานข้อมูลหรือไม่
+            if (products && products.length > 0) {
+                // วนลูปสินค้าแต่ละรายการ
+                products.forEach((product) => {
+                    // สร้างแถวใหม่สำหรับสินค้า
+                    const productRow = document.createElement('div');
+                    productRow.className = 'product-table-row';
+
+                    // เติมข้อมูลสินค้าในแต่ละช่องของแถว
+                    productRow.innerHTML = `
+                        <div><img class="profile-pic" src="${product.imageUrl || '/public/image/default-product.jpg'}" alt="${product.productName}"></div>
+                        <div>${product.productId}</div>
+                        <div>${product.productName}</div>
+                        <div>${product.price}</div>
+                        <div>${product.category}</div>
+                        <div>${product.description}</div>
+                        <div>
+                            <a href="#" class="edit-btn">
+                                <img src="/public/image/pen-solid.svg" alt="Edit" class="icon">
+                            </a>
+                            <a href="#" class="delete-btn">
+                                <img src="/public/image/trash-can-solid.svg" alt="Delete" class="icon">
+                            </a>
+                        </div>
+                    `;
+
+                    // เพิ่มแถวใหม่ลงใน container
+                    productTableContainer.appendChild(productRow);
+                });
+            } else {
+                // กรณีไม่มีสินค้าในฐานข้อมูล
+                const emptyRow = document.createElement('div');
+                emptyRow.className = 'product-table-row';
+                emptyRow.innerHTML = `
+                    <div colspan="6" style="text-align: center;">No products found.</div>
+                `;
+                productTableContainer.appendChild(emptyRow);
+            }
+        } catch (error) {
+            // กรณีเกิดข้อผิดพลาดในการโหลดสินค้า
+            console.error('Error loading products:', error);
+
+            const errorRow = document.createElement('div');
+            errorRow.className = 'product-table-row';
+            errorRow.innerHTML = `
+                <div colspan="6" style="text-align: center;">Error loading products.</div>
+            `;
+            productTableContainer.appendChild(errorRow);
+        }
+    }
+
+    // เรียกฟังก์ชัน loadProducts เมื่อหน้าโหลดเสร็จ
+    await loadProducts();
+});
+
+    </script>
+
+</body>
+
+</html>

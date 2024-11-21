@@ -1,0 +1,372 @@
+
+
+
+.product-form{
+    font-family: sans-serif;
+    background-color: white;
+    max-width: 100%;
+    background-color: #F6F6F6;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);      
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    margin: 40px 10px ;   
+}
+
+.product-form {
+    padding-left: 5%;
+    display: flex;
+    justify-content: space-between;
+    
+}
+
+.product-image {
+    width: 75%;
+    height: 500px;
+}
+
+.image-placeholder {
+    width: 75%;
+    height: 450px;
+    background-color: #FEE1E8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #FF5A79;
+  
+}
+
+
+.form-fields {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+input[type="text"], textarea {
+    margin-top: 10%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid;
+    box-shadow: 2px 3px #ccc;
+
+}
+
+#input-text-describtion {
+    height: 80px  ;
+    resize: none;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    width: 400px;
+}
+
+#input-text-Pro_name{
+    width: 385px;
+}
+
+#input-text-describtion{
+    width: 385px;
+}
+
+.input-select {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid;
+    box-shadow: 2px 3px #ccc;
+    font-size: 16px;
+}
+
+.column {
+    width: 200px;
+}
+
+.form-buttons {
+    margin-top: 20px;
+    display: flex;  /* ใช้ flexbox เพื่อจัดปุ่ม */
+    justify-content: space-between;  /* จัดปุ่มให้เว้นระยะห่างเท่าๆกัน */
+    width: 380px;
+}
+
+button {
+    width: 180px;
+    padding: 10px;
+    border-radius: 20px;
+    border-width: 1px;
+    cursor: pointer;
+    background-color: #FAD2E1;
+    box-shadow: 2px 3px #ccc;
+    display: block;
+    white-space: nowrap;
+    justify-content: center;
+
+}
+
+
+
+/* mine */
+/* .form-fields{
+    background-color: #F6F6F6;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 1000px;
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 50px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    margin-top: 10px;
+    font-weight: bold;
+    margin-left: 500px;
+}
+
+
+input[type="text"], textarea {
+    width: 200px;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    margin-left: 500px
+}
+
+#input-text-describtion {
+    margin-left: 500px;
+    height: 80px;
+    resize: none;
+    width: 400px;
+}
+
+
+button {
+    width: 150px;
+    padding: 10px 21px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    margin-left: 500px;
+  
+}
+
+button.cancel {
+    background-color: #FAD2E1;
+}
+
+button.save {
+    background-color: #FAD2E1;
+
+} */
+/* end */
+
+
+
+
+
+
+
+/* old form */
+/* .form-fields {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    margin-left: 500px;
+    margin-top: 50px;
+    padding: 10px 20px;
+}
+
+
+.form-fields label{
+    padding-bottom: 2%;
+    margin-top: 2%;
+}
+
+.input-text{
+    padding-top: 2%;
+    border: 1px solid;
+    border-radius: 10px;
+    padding: 5px
+    
+}
+button{
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+} */
+
+
+
+
+
+
+
+/* * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    display: flex;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #FAD2E1;
+    padding: 20px;
+    height: 100vh;
+}
+
+.sidebar .logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+}
+
+.sidebar ul li {
+    margin: 10px 0;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+.sidebar ul li a.active {
+    color: #FF5A79;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.user-controls {
+    display: flex;
+    align-items: center;
+}
+
+.user-controls span {
+    margin-right: 10px;
+}
+
+.user-controls a.logout {
+    text-decoration: none;
+    color: #FF5A79;
+}
+
+.product-form {
+    display: flex;
+    justify-content: space-between;
+}
+
+.product-image {
+    width: 45%;
+}
+
+.image-placeholder {
+    width: 100%;
+    height: 300px;
+    background-color: #FEE1E8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #FF5A79;
+    margin-bottom: 10px;
+}
+
+.thumbnail-list {
+    display: flex;
+    justify-content: space-between;
+}
+
+.thumbnail {
+    width: 60px;
+    height: 60px;
+    background-color: #FEE1E8;
+    border: 2px dashed #FF5A79;
+}
+
+.form-fields {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-text, textarea {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+textarea {
+    height: 100px;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancel {
+    background-color: #ccc;
+}
+
+.save {
+    background-color: #FF5A79;
+    color: white;
+} */
