@@ -110,21 +110,28 @@ Admin.put('/product',authorize, function (req, res) {
     });
 });
 // ==  PRODUCT Delete    == 
-Admin.delete('/product',authorize, function (req, res) {
+Admin.delete('/product', function (req, res) {
+    console.log('Received DELETE Request:');
+    console.log('Body:', req.body); // Debug เพื่อดูว่า `ProductID` ถูกส่งมาหรือไม่
+
     let ProductID = req.body.ProductID;
 
     if (!ProductID) {
         return res.status(400).send({
             error: true,
-            message: 'Please provide ProductID'
+            message: 'Please provide ProductID',
         });
     }
-    connection.query("DELETE FROM product WHERE ProductID = ?", [ProductID], function (error, results) {
-        if (error) throw error;
+
+    connection.query('DELETE FROM product WHERE ProductID = ?', [ProductID], function (error, results) {
+        if (error) {
+            console.error('Error in SQL query:', error);
+            throw error;
+        }
         return res.send({
             error: false,
             data: results.affectedRows,
-            message: 'Product has been deleted successfully'
+            message: 'Product has been deleted successfully',
         });
     });
 });
@@ -324,5 +331,5 @@ Admin.post("/signin", (req, res) => {
 /* --------------------------*/
 // Run Server 
 app.listen(process.env.PORT, function () {
-    console.log(`Server is running on port: ${process.env.PORT}`);
+    console.log(`Server-back is running on port: ${process.env.PORT}`);
 });

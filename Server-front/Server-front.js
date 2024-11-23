@@ -92,5 +92,5 @@ Admin.get('/AdminEdit', (req, res) => {
 
 // Run Server 
 app.listen(process.env.PORT, function () {
-    console.log(`Server is running on port: ${process.env.PORT}`);
+    console.log(`Server-front is running on port: ${process.env.PORT}`);
 });
