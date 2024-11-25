@@ -187,7 +187,7 @@
 
                                     productRow.innerHTML = `
                         <div>
-                            <img class="profile-pic" src="${product.imageUrl || '/images/default-product.png'}" alt="${product.ProductName}">
+                            <img class="profile-pic" src="${product.ImageURL ? product.ImageURL  : '/images/product/001.png'}" alt="${product.ProductName}">
                         </div>
                         <div>${product.ProductID}</div>
                         <div>${product.ProductName}</div>
@@ -196,7 +196,7 @@
                         <div>${product.CategoryID || 'N/A'}</div>
                         <div>Last updated: ${product.updated_at || 'N/A'}</div>
                         <div>
-                            <a href="#" class="edit-btn">
+                            <a href="/ProductEdit?productId=${product.ProductID}" class="edit-btn">
                                 <img src="/images/Normal_page/pen-solid.svg" alt="Edit" class="icon">
                             </a>
                             <a href="#" class="delete-btn" data-id="${product.ProductID}">

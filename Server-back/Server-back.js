@@ -7,6 +7,7 @@ const authorize = require("./middleware/auth");
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const multer = require('multer');
 
 
 
@@ -14,6 +15,10 @@ const cors = require('cors');
 dotenv.config();
 const app = express();
 const Admin = express.Router();
+const upload = multer({ dest: 'uploads/' }); // โฟลเดอร์สำหรับเก็บรูปภาพ
+// ใช้ path.join() เพื่อสร้าง path ที่ถูกต้อง
+const folderPath = path.join('C:', 'Users', 'DELL', 'OneDrive', 'เดสก์ท็อป', 'Web', 'Demo_Web_Cupicute', 'Server-front', 'public', 'images', 'Product');
+console.log(folderPath); // จะแสดงผลเป็น path ที่ถูกต้องสำหรับระบบปฏิบัติการ
 app.use(cookieParser());
 
 /* --------------------------*/
@@ -30,6 +35,7 @@ let corsOptions = {
     credentials: true, // อนุญาตให้ส่ง cookies
 
 };
+app.options('*', cors(corsOptions)); // Enable preflight for all routes
 app.use(cors(corsOptions));
 
 /* --------------------------*/
@@ -63,9 +69,31 @@ app.use((err, req, res, next) => {
 })
 
 
-/* กำหนดเส้นทางสำหรับการดึงข้อมูลจากฐานข้อมูล
+// /* กำหนดเส้นทางสำหรับการดึงข้อมูลจากฐานข้อมูล
 
-============  PRODUCT Insert    ============ */
+// ============   Upload Image    ============ */
+
+// กำหนดโฟลเดอร์สำหรับจัดเก็บไฟล์
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'C:/Users/DELL/OneDrive/เดสก์ท็อป/Web/Demo_Web_Cupicute/Server-front/public/images/Product');
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname)); // ตั้งชื่อไฟล์ให้ไม่ซ้ำ
+    },
+});
+
+app.post('/uploadImage', upload.single('image'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const imageUrl = `/uploads/${req.file.filename}`;
+    res.json({ imageUrl });
+});
+
+
+// ============  PRODUCT Insert    ============ */
 Admin.post('/product', function (req, res) {
     let product = req.body;
 
@@ -90,25 +118,73 @@ Admin.post('/product', function (req, res) {
     });
 });
 // ==  PRODUCT Update    == 
-Admin.put('/product',authorize, function (req, res) {
-    let ProductID = req.body.ProductID;
-    let product = req.body.product;
+// Admin.put('/product',authorize, function (req, res) {
+//     let ProductID = req.body.ProductID;
+//     let product = req.body.product;
 
-    if (!ProductID || !product) {
+//     if (!ProductID || !product) {
+//         return res.status(400).send({
+//             error: product,
+//             message: 'Please provide Product information'
+//         });
+//     }
+//     connection.query("UPDATE product SET ? WHERE ProductID = ?", [product, ProductID], function (error, results) {
+//         if (error) throw error;
+//         return res.send({
+//             error: false,
+//             data: results.affectedRows,
+//             message: 'Product has been update successfully'
+//         });
+//     });
+// });
+
+// ==  PRODUCT Update    == 
+Admin.put('/product/:id', function (req, res) {
+    const { ProductID, product } = req.body;
+    const productIdFromBody = ProductID || req.params.id;  // ใช้ ProductID จาก body หรือจาก URL
+
+    console.log('Received ID:', productIdFromBody);
+    console.log('Received Payload:', JSON.stringify(req.body, null, 2));
+
+    // ตรวจสอบว่า ProductID และ product ถูกส่งมาครบถ้วน
+    if (!productIdFromBody || !product || typeof product !== 'object') {
         return res.status(400).send({
-            error: product,
-            message: 'Please provide Product information'
+            error: true,
+            message: 'Please provide valid ProductID and product details',
         });
     }
-    connection.query("UPDATE product SET ? WHERE ProductID = ?", [product, ProductID], function (error, results) {
-        if (error) throw error;
-        return res.send({
-            error: false,
-            data: results.affectedRows,
-            message: 'Product has been update successfully'
-        });
-    });
+
+    // อัปเดตสินค้าในฐานข้อมูล
+    connection.query(
+        "UPDATE product SET ? WHERE ProductID = ?",
+        [product, productIdFromBody],  // ใช้ productIdFromBody แทน req.params.id
+        function (error, results) {
+            if (error) {
+                console.error('Database error:', error);
+                return res.status(500).send({
+                    error: true,
+                    message: 'Internal Server Error',
+                });
+            }
+
+            // ตรวจสอบว่ามีการอัปเดตจริงหรือไม่
+            if (results.affectedRows === 0) {
+                return res.status(404).send({
+                    error: true,
+                    message: `No product found with ProductID: ${productIdFromBody}`,
+                });
+            }
+
+            // ส่ง Response กลับไปยัง Client
+            return res.send({
+                error: false,
+                data: results,
+                message: 'Product has been updated successfully',
+            });
+        }
+    );
 });
+
 // ==  PRODUCT Delete    == 
 Admin.delete('/product', function (req, res) {
     console.log('Received DELETE Request:');
@@ -172,6 +248,53 @@ Admin.get('/products', function (req, res) {
         });
     });
 });
+
+
+// ============      ============
+// Route สำหรับ Product_Edit
+// ---------------------ของ เฟิร์น------------------
+app.get('/Product_Edit', (req, res) => {
+    const productId = req.query.productId; // ดึงค่า productId จาก query string
+    if (productId) {
+        res.send(`Edit Page for Product ID: ${productId}`);
+    } else {
+        res.status(400).send('Product ID is missing');
+    }
+});
+// -------------------เก่า---------------------
+// app.get('/Product_Edit', (req, res) => {
+//     const productId = req.query.productId; // ดึงค่า productId จาก query string
+//     if (!productId) {
+//         return res.status(400).send('Product ID is missing');
+//     }
+
+//     // SQL Query เพื่อดึงข้อมูลผลิตภัณฑ์
+//     const sql = `SELECT * FROM products WHERE ProductID = ?`;
+//     db.query(sql, [productId], (err, result) => {
+//         if (err) {
+//             console.error(err);
+//             return res.status(500).send('Database query error');
+//         }
+//         if (result.length > 0) {
+//             res.json(result[0]); // ส่งข้อมูลผลิตภัณฑ์กลับในรูปแบบ JSON
+//         } else {
+//             res.status(404).send('Product not found');
+//         }
+//     });
+// });
+// -----------------Product Edit Get---------------
+
+// app.get('/Product_Edit', (req, res) => {
+//     const productId = req.query.productId;
+//     console.log('Product ID:', productId); // Debug
+//     if (productId) {
+//         res.sendFile(path.join(__dirname, 'public', 'html', 'ProductEdit.html')); // ตรวจสอบตำแหน่งไฟล์
+//     } else {
+//         console.error('Product ID is missing');
+//         res.status(400).send('Product ID is missing');
+//     }
+// });
+
 // ============  ADMIN + USER Insert    ============
 Admin.post('/userAdmin',authorize, (req, res) => {
     let { user, admin } = req.body;
@@ -326,6 +449,10 @@ Admin.post("/signin", (req, res) => {
         }
     );
 });
+// Admin.get("/test"), (req, res) => {
+//     connection.query(SELECT * FROM productcategory WHERE CategoryID = 'CategoryValue';
+// }
+
 
 
 /* --------------------------*/
