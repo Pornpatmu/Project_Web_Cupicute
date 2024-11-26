@@ -6,6 +6,7 @@ const mysql = require('mysql2');
 const authorize = require("./middleware/auth");
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const multer = require('multer');
 
 
 
@@ -63,7 +64,7 @@ app.use((err, req, res, next) => {
 })
 
 
-/* กำหนดเส้นทางสำหรับการดึงข้อมูลจากฐานข้อมูล
+// /* กำหนดเส้นทางสำหรับการดึงข้อมูลจากฐานข้อมูล
 
 // ============  PRODUCT Insert    ============ */
 Admin.post('/product', function (req, res) {
@@ -102,6 +103,8 @@ Admin.put('/product/:id', function (req, res) {
         return res.status(400).send({
             error: true,
             message: 'Please provide valid ProductID and product details',
+            error: true,
+            message: 'Please provide valid ProductID and product details',
         });
     }
 
@@ -134,9 +137,44 @@ Admin.put('/product/:id', function (req, res) {
             });
         }
     );
+
+    // อัปเดตสินค้าในฐานข้อมูล
+    connection.query(
+        "UPDATE product SET ? WHERE ProductID = ?",
+        [product, productIdFromBody],  // ใช้ productIdFromBody แทน req.params.id
+        function (error, results) {
+            if (error) {
+                console.error('Database error:', error);
+                return res.status(500).send({
+                    error: true,
+                    message: 'Internal Server Error',
+                });
+            }
+
+            // ตรวจสอบว่ามีการอัปเดตจริงหรือไม่
+            if (results.affectedRows === 0) {
+                return res.status(404).send({
+                    error: true,
+                    message: `No product found with ProductID: ${productIdFromBody}`,
+                });
+            }
+
+            // ส่ง Response กลับไปยัง Client
+            return res.send({
+                error: false,
+                data: results,
+                message: 'Product has been updated successfully',
+            });
+        }
+    );
 });
 
+
 // ==  PRODUCT Delete    == 
+Admin.delete('/product', function (req, res) {
+    console.log('Received DELETE Request:');
+    console.log('Body:', req.body); // Debug เพื่อดูว่า `ProductID` ถูกส่งมาหรือไม่
+
 Admin.delete('/product', function (req, res) {
     console.log('Received DELETE Request:');
     console.log('Body:', req.body); // Debug เพื่อดูว่า `ProductID` ถูกส่งมาหรือไม่
@@ -147,8 +185,15 @@ Admin.delete('/product', function (req, res) {
         return res.status(400).send({
             error: true,
             message: 'Please provide ProductID',
+            message: 'Please provide ProductID',
         });
     }
+
+    connection.query('DELETE FROM product WHERE ProductID = ?', [ProductID], function (error, results) {
+        if (error) {
+            console.error('Error in SQL query:', error);
+            throw error;
+        }
 
     connection.query('DELETE FROM product WHERE ProductID = ?', [ProductID], function (error, results) {
         if (error) {
@@ -158,6 +203,7 @@ Admin.delete('/product', function (req, res) {
         return res.send({
             error: false,
             data: results.affectedRows,
+            message: 'Product has been deleted successfully',
             message: 'Product has been deleted successfully',
         });
     });
@@ -384,5 +430,6 @@ Admin.get("/UserAdminselect", authorize, (req, res) => {
 /* --------------------------*/
 // Run Server 
 app.listen(process.env.PORT, function () {
+    console.log(`Server-back is running on port: ${process.env.PORT}`);
     console.log(`Server-back is running on port: ${process.env.PORT}`);
 });
