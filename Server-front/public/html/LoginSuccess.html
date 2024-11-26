@@ -2,22 +2,46 @@
 <html lang="en">
 
 <body>
-    <H1> Welcome! </H1>
+    <h1>Welcome!</h1>
+    <div id="user-profile">
+         <p id="username"></p>
+    </div>
+
     <button type="button" id="logout-button">Logout</button>
 
-    <script type ="module">
-        import { callUserAdminWS } from "/client_js/callUserAdminWS.js";
+    <script type="module">
+        import { callLoginWS } from "/callLoginWS.js";
+
+        async function fetchUserProfile() {
+            try {
+                const data = await callLoginWS("getUserProfile");
+                console.log(data)
+
+                if (data) {
+                    document.getElementById('username').textContent = `${data.username}`; 
+                } else {
+                    console.log("User profile not found.");
+                    document.getElementById('username').textContent = "No user profile found.";
+                }
+            } catch (error) {
+                console.error("Error fetching user profile:", error); 
+                document.getElementById('username').textContent = "Error fetching user profile."; 
+            }
+        }
+
         async function handleLogout() {
             try {
-                const data = await callUserAdminWS("logout");  
-                console.log(data);  
+                const data = await callLoginWS("logout");
+                localStorage.removeItem('authToken');
+                console.log(data.message);
                 window.location.href = '/';
             } catch (error) {
-                console.error("Logout failed:", error);  
+                console.error("Logout failed:", error);
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            fetchUserProfile();
             const logoutButton = document.getElementById('logout-button');
             if (logoutButton) {
                 logoutButton.addEventListener('click', handleLogout);

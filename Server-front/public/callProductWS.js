@@ -1,10 +1,9 @@
 const rootURL = "http://localhost:3002";
 
-
-//ไม่ใช้ token
-export async function callProductWS(url, method, productData) { 
+export async function callProductWS(url, method, productData = null) {
     let data;
     const fullURL = new URL(url, rootURL);
+    console.log(`Calling method: ${method} at ${fullURL}`);
 
     try {
         let response;
@@ -17,9 +16,14 @@ export async function callProductWS(url, method, productData) {
                     },
                 });
 
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
                 data = await response.json();
                 console.log(data);
                 break;
+
             case "insertProduct":
                 response = await fetch(fullURL, {
                     method: "POST",
@@ -28,33 +32,61 @@ export async function callProductWS(url, method, productData) {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify(productData),
-
                 });
 
-                //data = await response.json();
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                data = await response.json();
+                console.log(data);
                 break;
 
-            case "updateProduct": // อัปเดตข้อมูล Product
+            case "updateProduct":
                 response = await fetch(fullURL, {
                     method: "PUT",
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(data),
+                    body: JSON.stringify({
+                        ProductID: productData.ProductID,
+                        product: productData.product,
+                    }),
                 });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                data = await response.json();
+                console.log(data);
                 break;
 
-            case "deleteProduct": // ลบ Product
-                response = await fetch(fullURL, {
-                    method: "DELETE",
-                });
-                break;
-
+                case "deleteProduct":
+                    response = await fetch(fullURL, {
+                        method: "DELETE",
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            ProductID: productData.ProductID,
+                        }),
+                    });
+                
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                
+                    data = await response.json();
+                    console.log(data);
+                    break;
+       
             default:
                 throw new Error("Method not supported.");
         }
     } catch (error) {
         console.error("Error in callProductWS:", error.message);
+        alert(`Error: ${error.message}`);
     }
     return data;
 }

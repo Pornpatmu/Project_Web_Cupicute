@@ -82,7 +82,7 @@
         </div>
     </footer>
     <script type="module">
-        import { callUserAdminWS } from "/callUserAdminWS.js";
+        import { callLoginWS } from "/callLoginWS.js";
 
 
 
@@ -99,7 +99,7 @@
     }
 }
 
- async function handleLogin() {
+async function handleLogin() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     const loginButton = document.getElementById('login-button');
@@ -118,14 +118,20 @@
     let user_data = { username, password };
 
     try {
-        const data = await callUserAdminWS("signin", user_data); 
+        const data = await callLoginWS("signin",  user_data ); 
         console.log(data);
+        const token = data.token;
 
-        if (data.token) {
-            errorMessage.style.display = 'none';  
+        if (data.token) {            
+            errorMessage.style.display = 'none'; 
+            localStorage.setItem('authToken', data.token);
+            localStorage.setItem('userID', data.userID);
+            console.log(localStorage.getItem('authToken')); 
+ 
             window.location.href = '/LoginSuccess'; 
         } else {
             errorMessage.style.display = 'block';
+            errorMessage.textContent = "Invalid username or password."; // แสดงข้อความผิดพลาดเมื่อไม่มี token
             console.log(data);
         }
     } catch (error) {
@@ -136,6 +142,7 @@
         loginButton.disabled = false;
     }
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const eyeIcon = document.getElementById('eye-icon');

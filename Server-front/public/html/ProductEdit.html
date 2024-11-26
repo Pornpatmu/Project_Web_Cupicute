@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product_Edit</title>
+    <link rel="stylesheet" href="/css/ProductAdd.css">
+    <link rel="stylesheet" href="/css/components2.css">
+    <!-- <script src="/Product_add.js"></script> -->
+
+</head>
+
+<body>
+    <!-- Navigation Sidebar -->
+    <div class="navbar">
+        <div class="logo">
+            <img src="/images/Normal_page/Logo.png" alt="CupiCute Logo">
+        </div>
+        <ul class="menu">
+            <li>
+                <a href="/">
+                    <div class="icon-background">
+                        <img class="menu-icon" src="/images/Normal_page/house-solid.svg" alt="Home Icon">
+                    </div>
+                    <i class="fa fa-home"></i> Home
+                </a>
+            </li>
+            <li>
+                <a href="/Product_view">
+                    <div class="icon-background">
+                        <img class="menu-icon" src="/images/Normal_page/bag-shopping-solid.svg" alt="Product Icon">
+                    </div>
+                    <i class="fa fa-pr"></i> Product Management
+                </a>
+            </li>
+            <li>
+                <a href="/Admin">
+                    <div class="icon-background">
+                        <img class="menu-icon" src="/images/Normal_page/user-large-solid.svg" alt="User Icon">
+                    </div>
+                    <i class="fa fa-users"></i> User Management
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header>
+            <div class="header-left">
+                <img src="/images/Normal_page/bag-shopping-solid-pink.svg" alt="Product Icon">
+                <h1>PRODUCT Editing</h1>
+            </div>
+            <div class="header-right">
+                <img src="/images/Normal_page/circle-user-regular.svg" alt="User Image">
+                <span>USERNAME</span>
+                <img src="/images/Normal_page/right-to-bracket-solid.svg" alt="Logout_Icon">
+                <a href="#" class="logout-btn">Log out</a>
+            </div>
+        </header>
+
+        <!-- /Form สำหรับ Add  Product -->
+        <form id="editproductFrom" onsubmit="handleEditFormSubmit(event)">
+            <section class="product-form">
+
+                <!-- Add Image -->
+                <div class="product-image">
+                    <label for="text_Product_image">PRODUCT IMAGE</label><br>
+                    <div class="image-placeholder"></div>
+                </div>
+
+
+                <div class="form-fields">
+
+                    <div class="row">
+                        <div class="column">
+                            <label for="input_text_Pro_name">PRODUCT NAME</label>
+                            <input id="input_text_Pro_name" type="text" placeholder="Product Name" class="input-text"
+                                name="pro_name" title="please put product name" required><br>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="column">
+                            <label for="category_select">CATEGORY</label>
+                            <select id="category_select" class="input-select" name="pro_category"
+                                title="please chose product's category" required>
+                                <option value="" disabled selected>Select a category</option>
+                                <option value="Lips">Lips</option>
+                                <option value="Foundation">Foundation</option>
+                                <option value="Blush">Blush</option>
+                                <option value="Mascara">Mascara</option>
+                                <option value="Highlighter">Highlighter</option>
+                            </select>
+                            <!-- <input id="input-text-category" type="text" placeholder="Category" class="input-text"> -->
+                        </div>
+                        <div class="column">
+                            <label for="input_text_price">PRICEE</label>
+                            <input id="input_text_price" type="text" placeholder="Price" class="input-text "
+                                name="pro_price" title="please put product's price" required>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="column">
+                            <label for="input_text_describtion">DESCRIBTION</label>
+                            <textarea id="input_text_describtion" type="text" placeholder="Description" name="pro_des"
+                                title="please put the Description" required></textarea><br>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="column">
+                            <label for="input_text_Pro_id">PRODUCT ID</label>
+                            <input id="input_text_Pro_id" type="text" placeholder="000" class="input-text" name="productId"
+                                title="please add product id" required>
+                        </div>
+                    </div>
+
+                    <div class="form-buttons">
+                        <div>
+                            <button class="cancel" id="cancel" type="reset" onclick="cancelForm(event)">Cancel</button>
+                        </div>
+                        <div>
+                            <button class="save" type="submit" >Save</button>
+
+                        </div>
+                    </div>
+            </section>
+        </form>
+        </main>
+    </div>
+    <script type="module">
+    //     import { callProductWS } from "/callProductWS.js";
+
+    // document.addEventListener('DOMContentLoaded', async () => {
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     const productIdFromUrl = urlParams.get('pro_id'); 
+    //     console.log('Product ID from URL:', productIdFromUrl);
+
+    //     if (!productIdFromUrl) {
+    //         console.error('Product ID not found in URL.');
+    //         alert('Product ID is missing. Please check the URL.');
+    //         return;
+    //     }
+
+    //     try {
+    //         const response = await fetch(`http://localhost:3002/product/${productIdFromUrl}`); //ไปใส่ในcallจ้า
+    //         if (!response.ok) {
+    //             console.error('Failed to fetch product data:', response.status);
+    //             throw new Error(`Error: ${response.status}`);
+    //         }
+
+    //         const result = await response.json();
+    //         console.log('Fetched product data:', result);
+
+    //         if (result && !result.error && result.data) {
+    //             const productData = result.data;
+
+    //             // Fill form with fetched product data
+    //             document.getElementById('input_text_Pro_id').value = productData.ProductID || '';
+    //             document.getElementById('input_text_Pro_name').value = productData.ProductName || '';
+    //             document.getElementById('category_select').value = productData.CategoryID || '';
+    //             document.getElementById('input_text_price').value = productData.Price || '';
+    //             document.getElementById('input_text_describtion').value = productData.P_Description || '';
+    //         } else {
+    //             throw new Error('Invalid product data structure.');
+    //         }
+    //     } catch (error) {
+    //         console.error('Error loading product data:', error);
+    //         alert('Unable to load product data. Please try again later.');
+    //     }
+    // });
+
+    // function getCategoryIDFromName(categoryName) {
+    //     const categoryMap = {
+    //         'Lips': '1',
+    //         'Foundation': '2',
+    //         'Blush': '3',
+    //         'Mascara': '4',
+    //         'Highlighter': '5'
+    //     };
+    //     return categoryMap[categoryName] || '';
+    // }
+
+    // async function handleFormSubmit(event) {
+    //     event.preventDefault();
+
+    //     const categorySelect = document.getElementById('category_select');
+    //     const selectedCategoryID = getCategoryIDFromName(categorySelect.value);
+
+    //     const productId = document.getElementById('input_text_Pro_id').value;
+    //     const updatedProduct = {
+    //         ProductID: productId,
+    //         ProductName: document.getElementById('input_text_Pro_name').value,
+    //         CategoryID: selectedCategoryID,
+    //         Price: document.getElementById('input_text_price').value,
+    //         P_Description: document.getElementById('input_text_describtion').value,
+    //     };
+
+    //     console.log('Payload for updating product:', updatedProduct);
+
+    //     try {
+    //         const updatedProductData = {
+    //             ProductID: productId,
+    //             product: updatedProduct,
+    //         };
+
+    //         const response = await callProductWS("/product", "updateProduct", updatedProductData);
+
+    //         if (!response.ok) {
+    //             console.error('Failed to update:', response.status);
+    //             alert(`Error: ${response.status}`);
+    //             return;
+    //         }
+
+    //         const result = await response.json();
+    //         console.log('Server Response:', result);
+
+    //         if (result.success) {
+    //             alert('Product updated successfully!');
+    //             window.location.href = '/Product_view';
+    //         } else {
+    //             console.error('Update failed:', result.message || 'Unknown error');
+    //             alert('Failed to save changes. Please try again.');
+    //         }
+    //     } catch (error) {
+    //         console.error('Error updating product:', error);
+    //         alert('Failed to save changes. Please try again later.');
+    //     }
+    // }
+
+    // --------------------------------------------------------
+
+// ------------------------------------------------------
+
+// import { callProductWS } from "/callProductWS.js";
+
+// // ฟังก์ชันเพื่อแปลงชื่อ category เป็น ID
+// function getCategoryIDFromName(categoryName) {
+//     const categoryMap = {
+//         'Lips': '1',
+//         'Foundation': '2',
+//         'Blush': '3',
+//         'Mascara': '4',
+//         'Highlighter': '5'
+//     };
+//     return categoryMap[categoryName] || '';
+// }
+
+// document.addEventListener('DOMContentLoaded', async () => {
+//     const urlParams = new URLSearchParams(window.location.search);
+//     const productIdFromUrl = urlParams.get('pro_id') || urlParams.get('productId');
+
+//     console.log('Product ID from URL:', productIdFromUrl);
+
+//     if (!productIdFromUrl) {
+//         console.error('Product ID not found in URL.');
+//         alert('Product ID is missing. Please check the URL.');
+//         return;
+//     }
+
+//     try {
+//         const result = await callProductWS(`/product/${productIdFromUrl}`, "getProducts");
+//         console.log('Fetched product data:', result);
+
+//         if (!result || result.error || !result.data) {
+//             throw new Error('Invalid product data structure.');
+//         }
+
+//         const productData = result.data;
+
+//         // Fill the form with fetched product data
+//         document.getElementById('input_text_Pro_id').value = productData.ProductID || '';
+//         document.getElementById('input_text_Pro_name').value = productData.ProductName || '';
+//         document.getElementById('category_select').value = getCategoryIDFromName(productData.CategoryID) || '';  // ใช้ฟังก์ชันนี้เพื่อแปลงเป็น ID
+//         document.getElementById('input_text_price').value = productData.Price || '';
+//         document.getElementById('input_text_describtion').value = productData.P_Description || '';
+//     } catch (error) {
+//         console.error('Error loading product data:', error.message);
+//         alert('Unable to load product data. Please try again later.');
+//     }
+// });
+
+// async function handleFormSubmit(event) {
+//     event.preventDefault(); // หยุดการรีเฟรชหน้า
+
+//     const productId = document.getElementById('input_text_Pro_id').value.trim();
+//     const productName = document.getElementById('input_text_Pro_name').value.trim();
+//     const categoryId = document.getElementById('category_select').value.trim();
+//     const price = parseFloat(document.getElementById('input_text_price').value.trim());
+//     const description = document.getElementById('input_text_describtion').value.trim();
+
+//     // Debug Inputs
+//     console.log('Product ID:', productId);
+//     console.log('Product Name:', productName);
+//     console.log('Category ID:', categoryId);
+//     console.log('Price:', price);
+//     console.log('Description:', description);
+
+//     if (!productId || !productName || !categoryId || isNaN(price) || !description) {
+//         alert('Please fill in all required fields correctly.');
+//         return;
+//     }
+
+//     const updatedProduct = {
+//         ProductID: productId,
+//         ProductName: productName,
+//         CategoryID: parseInt(categoryId),
+//         Price: parseFloat(price),
+//         P_Description: description,
+//     };
+
+//     console.log('Payload for updating product:', JSON.stringify(updatedProduct));
+
+//     try {
+//         const result = await callProductWS(`/product/${productId}`, "updateProduct", updatedProduct);
+
+//         console.log('Update Response:', result);
+
+//         if (result && result.error === false) {
+//             alert('Product updated successfully!');
+//             window.location.href = '/Product_view';
+//         } else {
+//             console.error('Update failed:', result.message || 'Unknown error');
+//             alert(`Failed to save changes: ${result.message || 'Unknown error'}`);
+//         }
+//     } catch (error) {
+//         console.error('Error updating product:', error.message);
+//         alert('Failed to save changes. Please try again later.');
+//     }
+// }
+
+import { callProductWS } from "/callProductWS.js";
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productIdFromUrl = urlParams.get('productId');
+    console.log('Product ID from URL:', productIdFromUrl);
+
+    if (!productIdFromUrl) {
+        console.error('Product ID not found in URL.');
+        alert('Product ID is missing. Please check the URL.');
+        return;
+    }
+
+    try {
+        // เรียกข้อมูลสินค้าจาก API
+        const response = await callProductWS(`/product/${productIdFromUrl}`, 'getProducts', null); // Replace fetch with callProductWS
+
+        if (response && !response.error && response.data) {
+            const productData = response.data;
+
+            // เติมข้อมูลที่ได้รับจาก API ไปในฟอร์ม
+            document.getElementById('input_text_Pro_id').value = productData.ProductID || '';
+            document.getElementById('input_text_Pro_name').value = productData.ProductName || '';
+            document.getElementById('category_select').value = productData.CategoryID || '';
+            document.getElementById('input_text_price').value = productData.Price || '';
+            document.getElementById('input_text_describtion').value = productData.P_Description || '';
+
+        } else {
+            throw new Error('Invalid product data structure.');
+        }
+    } catch (error) {
+        console.error('Error loading product data:', error);
+        alert('Unable to load product data. Please try again later.');
+    }
+});
+
+function getCategoryIDFromName(categoryName) {
+    const categoryMap = {
+        'Lips': '1',
+        'Foundation': '2',
+        'Blush': '3',
+        'Mascara': '4',
+        'Highlighter': '5'
+    };
+    return categoryMap[categoryName] || '';
+}
+
+async function handleEditFormSubmit(event) {
+    event.preventDefault();
+    try {
+        const categorySelect = document.getElementById('category_select');
+        const selectedCategoryID = getCategoryIDFromName(categorySelect.value);
+
+        const productId = document.getElementById('input_text_Pro_id').value;
+        const updatedProduct = {
+        ProductID: productId,
+        ProductName: document.getElementById('input_text_Pro_name').value,
+        CategoryID: selectedCategoryID,
+        Price: document.getElementById('input_text_price').value,
+        P_Description: document.getElementById('input_text_describtion').value,
+    };
+
+    console.log('Payload for updating product:', updatedProduct);
+
+        const updatedProductData = {
+            ProductID: productId,
+            product: updatedProduct,
+        };
+
+        // ส่งข้อมูลไปยังเซิร์ฟเวอร์ด้วยการใช้ callProductWS และ method "updateProduct"
+        const result = await callProductWS(`/product/${updatedProductData.ProductID}`, "updateProduct", updatedProductData);
+
+        alert('Product updated successfully!');
+        window.location.href = '/Product_view'; // ไปที่หน้าแสดงสินค้า
+        
+    } catch (error) {
+        console.error('Error updating product:', error);
+        alert('Failed to save changes. Please try again later.');
+    }
+}
+
+// เพิ่มฟังก์ชั่นให้ form
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('editproductFrom');
+    form.addEventListener('submit', handleEditFormSubmit);
+});
+
+    </script>
+</body>
+
+</html>

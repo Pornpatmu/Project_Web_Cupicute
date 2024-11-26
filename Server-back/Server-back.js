@@ -5,7 +5,6 @@ const path = require('path')
 const mysql = require('mysql2');
 const authorize = require("./middleware/auth");
 const jwt = require('jsonwebtoken');
-const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 
@@ -14,7 +13,7 @@ const cors = require('cors');
 dotenv.config();
 const app = express();
 const Admin = express.Router();
-app.use(cookieParser());
+
 
 /* --------------------------*/
 // ใช้ middleware
@@ -27,9 +26,10 @@ app.use(express.urlencoded({ extended: true }));
 let corsOptions = {
     origin: 'http://localhost:3001', // โดเมนที่อนุญาต
     methods: 'GET,POST,PUT,DELETE', // เมธอดที่อนุญาต
-    credentials: true, // อนุญาตให้ส่ง cookies
+    allowedHeaders: ['Content-Type', 'Authorization']
 
 };
+
 app.use(cors(corsOptions));
 
 /* --------------------------*/
@@ -65,7 +65,7 @@ app.use((err, req, res, next) => {
 
 /* กำหนดเส้นทางสำหรับการดึงข้อมูลจากฐานข้อมูล
 
-============  PRODUCT Insert    ============ */
+// ============  PRODUCT Insert    ============ */
 Admin.post('/product', function (req, res) {
     let product = req.body;
 
@@ -90,41 +90,75 @@ Admin.post('/product', function (req, res) {
     });
 });
 // ==  PRODUCT Update    == 
-Admin.put('/product',authorize, function (req, res) {
-    let ProductID = req.body.ProductID;
-    let product = req.body.product;
+Admin.put('/product/:id', function (req, res) {
+    const { ProductID, product } = req.body;
+    const productIdFromBody = ProductID || req.params.id;  // ใช้ ProductID จาก body หรือจาก URL
 
-    if (!ProductID || !product) {
+    console.log('Received ID:', productIdFromBody);
+    console.log('Received Payload:', JSON.stringify(req.body, null, 2));
+
+    // ตรวจสอบว่า ProductID และ product ถูกส่งมาครบถ้วน
+    if (!productIdFromBody || !product || typeof product !== 'object') {
         return res.status(400).send({
-            error: product,
-            message: 'Please provide Product information'
+            error: true,
+            message: 'Please provide valid ProductID and product details',
         });
     }
-    connection.query("UPDATE product SET ? WHERE ProductID = ?", [product, ProductID], function (error, results) {
-        if (error) throw error;
-        return res.send({
-            error: false,
-            data: results.affectedRows,
-            message: 'Product has been update successfully'
-        });
-    });
+
+    // อัปเดตสินค้าในฐานข้อมูล
+    connection.query(
+        "UPDATE product SET ? WHERE ProductID = ?",
+        [product, productIdFromBody],  // ใช้ productIdFromBody แทน req.params.id
+        function (error, results) {
+            if (error) {
+                console.error('Database error:', error);
+                return res.status(500).send({
+                    error: true,
+                    message: 'Internal Server Error',
+                });
+            }
+
+            // ตรวจสอบว่ามีการอัปเดตจริงหรือไม่
+            if (results.affectedRows === 0) {
+                return res.status(404).send({
+                    error: true,
+                    message: `No product found with ProductID: ${productIdFromBody}`,
+                });
+            }
+
+            // ส่ง Response กลับไปยัง Client
+            return res.send({
+                error: false,
+                data: results,
+                message: 'Product has been updated successfully',
+            });
+        }
+    );
 });
+
 // ==  PRODUCT Delete    == 
-Admin.delete('/product',authorize, function (req, res) {
+Admin.delete('/product', function (req, res) {
+    console.log('Received DELETE Request:');
+    console.log('Body:', req.body); // Debug เพื่อดูว่า `ProductID` ถูกส่งมาหรือไม่
+
     let ProductID = req.body.ProductID;
 
     if (!ProductID) {
         return res.status(400).send({
             error: true,
-            message: 'Please provide ProductID'
+            message: 'Please provide ProductID',
         });
     }
-    connection.query("DELETE FROM product WHERE ProductID = ?", [ProductID], function (error, results) {
-        if (error) throw error;
+
+    connection.query('DELETE FROM product WHERE ProductID = ?', [ProductID], function (error, results) {
+        if (error) {
+            console.error('Error in SQL query:', error);
+            throw error;
+        }
         return res.send({
             error: false,
             data: results.affectedRows,
-            message: 'Product has been deleted successfully'
+            message: 'Product has been deleted successfully',
         });
     });
 });
@@ -165,6 +199,8 @@ Admin.get('/products', function (req, res) {
         });
     });
 });
+
+
 // ============  ADMIN + USER Insert    ============
 Admin.post('/userAdmin',authorize, (req, res) => {
     let { user, admin } = req.body;
@@ -313,16 +349,40 @@ Admin.post("/signin", (req, res) => {
                 { expiresIn: "1h" } // 1 ชม. หมดอายุ
             );
             res.status(200).json({
-                message: "Login successful",
-                token: jwtToken
+                token: jwtToken,
+                message: "Login successful"
+
             });
         }
     );
 });
+//เส้นทางในการออกจากระบบ (ดูว่าclientลบtokenรึยัง)
+Admin.post("/logout",authorize, (req, res) => {
+    res.status(200).json({ message: 'Logged out successfully' });
+});
 
+//ดึงโปรไฟล์จากtoken
+Admin.get("/UserAdminselect", authorize, (req, res) => {
+    if (!req.decoded || !req.decoded.user) {
+        return res.status(401).json({ message: "Unauthorized: No user found in token" });
+    }
+    const username = req.decoded.user;
+    connection.query("SELECT * FROM user WHERE Username = ?", [username], (error, results) => {
+        if (error) {
+            return res.status(500).json({ message: "Database error" });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        const user = results[0]; 
+        res.status(200).json({
+            username: user.Username,
+        });
+    });
+});
 
 /* --------------------------*/
 // Run Server 
 app.listen(process.env.PORT, function () {
-    console.log(`Server is running on port: ${process.env.PORT}`);
+    console.log(`Server-back is running on port: ${process.env.PORT}`);
 });

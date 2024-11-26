@@ -2,16 +2,13 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const path = require('path')
-const jwt = require('jsonwebtoken');
-const cookieParser = require('cookie-parser');
-// const authorize = require("../Server-back/middleware/auth.js");
+const authorize = require("../Server-back/middleware/auth.js");
 
 
 /* --------------------------*/
 dotenv.config();
 const app = express();
 const Admin = express.Router();
-app.use(cookieParser());
 
 /* --------------------------*/
 // ใช้ middleware
@@ -92,5 +89,5 @@ Admin.get('/AdminEdit', (req, res) => {
 
 // Run Server 
 app.listen(process.env.PORT, function () {
-    console.log(`Server is running on port: ${process.env.PORT}`);
+    console.log(`Server-front is running on port: ${process.env.PORT}`);
 });

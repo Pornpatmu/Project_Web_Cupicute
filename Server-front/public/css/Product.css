@@ -1,71 +1,3 @@
-/* 
-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 10px;
-    background-color: white;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 20px;
-}
-
-table thead {
-    background-color: #fbd3e0;
-
-}
-
-table th,
-table td {
-    padding: 12px 15px;
-    text-align: left;
-    font-size: 16px;
-    border-bottom: none;
-}
-
-table th {
-    font-weight: bold;
-}
-
-table tbody tr {
-    background-color: #F6F6F6;
-    border: 1px solid #dcd8d8;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-table tbody tr:hover {
-    background-color: #f9f9f9;
-}
-
-table td a {
-    text-decoration: none;
-    font-size: 18px;
-    margin-right: 10px;
-
-}
-
-/* Responsive Design */
-/* @media (max-width: 768px) {
-    .navbar {
-        width: 200px;
-    }
-
-    .main-content {
-        margin-left: 200px;
-    }
-
-    header h1 {
-        font-size: 20px;
-    }
-
-    .add-new-btn {
-        font-size: 14px;
-    }
-
-    table th,
-    table td {
-        font-size: 14px;
-    }
-}  */
 
 .product-table {
     width: 100%;
@@ -123,15 +55,14 @@ table td a {
 
 .product-table-header div:nth-child(3),
 .product-table-row div:nth-child(3) {
-    white-space: normal; /* Allow wrapping for Email column */
-    overflow: visible;   /* Ensure content is fully visible */
-    word-wrap: break-word; /* Break long words to fit */
+    white-space: normal; 
+    overflow: visible;  
+    word-wrap: break-word; 
 }
 
-/* Flex container for the Edit and Delete buttons */
 .action-btns {
     display: flex;
-    gap: 8px; /* Space between the buttons */
+    gap: 8px; 
     justify-content: flex-start;
 }
 
@@ -151,7 +82,6 @@ table td a {
     color: #007bff;
 }
 
-/* Optional styling for the Last Active column */
 .last-active {
     font-style: italic;
     color: #666;
@@ -159,4 +89,20 @@ table td a {
 .add-new-btn{
     text-decoration: none;
 
+}
+
+/* จัดตำแหน่งเนื้อหาในช่อง Category (Header) */
+.product-table-header div:nth-child(6) {
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    text-align: center; 
+}
+
+/* จัดตำแหน่งเนื้อหาในช่อง Category (Row) */
+.product-table-row div:nth-child(6) {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    text-align: center; 
 }

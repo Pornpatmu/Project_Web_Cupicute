@@ -50,7 +50,7 @@
         <header>
             <div class="header-left">
                 <img src="/images/Normal_page/bag-shopping-solid-pink.svg" alt="Product Icon">
-                <h1>PRODUCT MANAGEMENT</h1>
+                <h1>PRODUCT ADDING</h1>
             </div>
             <div class="header-right">
                 <img src="/images/Normal_page/circle-user-regular.svg" alt="User Image">
@@ -133,299 +133,158 @@
         </form>
         </main>
     </div>
-
-
-    <!-- <script type="module" src="/client_js/function/ProductAdd.js"></script> -->
-    <!-- Javascript -->
     <script type="module">
-        import { callProductWS } from "/callProductWS.js";
+    
 
-    document.addEventListener('DOMContentLoaded', () => {
-        // ใส่โค้ด JavaScript ทั้งหมดของคุณที่นี่
-        const form = document.getElementById('fromid');
-        const productNameInput = document.getElementById('input_text_Pro_name');
-        const categorySelect = document.getElementById('category_select');
-        const priceInput = document.getElementById('input_text_price');
-        const descriptionInput = document.getElementById('input_text_describtion');
-        const productIdInput = document.getElementById('input_text_Pro_id');
-        const imagePlaceholder = document.querySelector('.image-placeholder');
-        const cancelButton = document.querySelector('.cancel');
-        const saveButton = document.querySelector('.save');
+    import { callProductWS } from "/callProductWS.js";
 
-        let formData = {};
+document.addEventListener('DOMContentLoaded', () => {
+    // ใส่โค้ด JavaScript ทั้งหมดของคุณที่นี่
+    const form = document.getElementById('fromid');
+    const productNameInput = document.getElementById('input_text_Pro_name');
+    const categorySelect = document.getElementById('category_select');
+    const priceInput = document.getElementById('input_text_price');
+    const descriptionInput = document.getElementById('input_text_describtion');
+    const productIdInput = document.getElementById('input_text_Pro_id');
+    const imagePlaceholder = document.querySelector('.image-placeholder');
+    const cancelButton = document.querySelector('.cancel');
+    const saveButton = document.querySelector('.save');
 
-        // ฟังก์ชันสำหรับรีเซ็ตฟอร์ม
-        function resetForm() {
-            productNameInput.value = '';
-            categorySelect.value = '';
-            priceInput.value = '';
-            descriptionInput.value = '';
-            productIdInput.value = '';
-            imagePlaceholder.style.backgroundImage = ''; // รีเซ็ตรูปภาพ
-            imagePlaceholder.style.backgroundSize = ''; // รีเซ็ตขนาด
-            imagePlaceholder.style.backgroundPosition = ''; // รีเซ็ตตำแหน่ง
+    let formData = {};
+
+    // ฟังก์ชันสำหรับรีเซ็ตฟอร์ม
+    function resetForm() {
+        productNameInput.value = '';
+        categorySelect.value = '';
+        priceInput.value = '';
+        descriptionInput.value = '';
+        productIdInput.value = '';
+        imagePlaceholder.style.backgroundImage = ''; // รีเซ็ตรูปภาพ
+        imagePlaceholder.style.backgroundSize = ''; // รีเซ็ตขนาด
+        imagePlaceholder.style.backgroundPosition = ''; // รีเซ็ตตำแหน่ง
+    }
+
+// ฟังก์ชันสำหรับอัปโหลดรูปภาพไปยังเซิร์ฟเวอร์
+async function uploadImage(file) {
+    if (!file.type.startsWith('image/')) {
+        alert('Please upload a valid image file.');
+        return null;
+    }
+
+    const formData = new FormData();
+    formData.append('image', file); // เพิ่มไฟล์รูปภาพลงใน FormData
+    console.log('Uploading file:', file); // ตรวจสอบไฟล์ก่อนอัปโหลด
+
+    try {
+        const response = await fetch('http://localhost:3002/uploadImage', { //แก้
+            method: 'POST',
+            body: formData,
+        });
+        console.log('Server response:', response); // ตรวจสอบ response
+
+        if (!response.ok) {
+            const errorMessage = await response.text(); // รับข้อความ error จากเซิร์ฟเวอร์
+            throw new Error(`Failed to upload image. Server response: ${errorMessage}`);
         }
 
-        // ฟังก์ชันสำหรับการอัปโหลดรูปภาพ
-        function handleImageUpload(event) {
-            const fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.accept = 'image/*';
+        const data = await response.json();
+        return data.imageUrl; // ส่ง URL รูปภาพกลับมา
+        console.log('Upload successful, data:', data); // ตรวจสอบข้อมูลที่ได้จากเซิร์ฟเวอร์
+    } catch (error) {
+        console.error('Error uploading image:', error);
+        alert(error.message); // แสดงข้อความข้อผิดพลาด
+        return null;
+    }
+}
 
-            fileInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        imagePlaceholder.style.backgroundImage = `url(${e.target.result})`;
-                        imagePlaceholder.style.backgroundSize = 'cover';
-                        imagePlaceholder.style.backgroundPosition = 'center';
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
 
-            fileInput.click();
-        }
+// ฟังก์ชันสำหรับจัดการการอัปโหลดเมื่อผู้ใช้เลือกไฟล์
+function handleImageUpload(event) {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
 
-        // แนบ event listener ให้ image placeholder เพื่ออัปโหลดรูปภาพ
-        imagePlaceholder.addEventListener('click', handleImageUpload);
+    fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        console.log('Selected file:', file); // ตรวจสอบไฟล์ที่ผู้ใช้เลือก
+        if (file) {
+            const imageUrl = await uploadImage(file); // อัปโหลดรูปภาพและรับ URL กลับมา
+            console.log('Uploaded image URL:', imageUrl); // ตรวจสอบผลลัพธ์จากฟังก์ชัน
+            if (imageUrl) {
+                imagePlaceholder.style.backgroundImage = `url(${imageUrl})`; // ตั้งค่ารูปภาพที่อัปโหลดสำเร็จ
+                imagePlaceholder.style.backgroundSize = 'cover';
+                imagePlaceholder.style.backgroundPosition = 'center';
 
-        // ฟังก์ชันสำหรับการแปลง Category เป็น CategoryID
-        function getCategoryID(category) {
-            const categoryMap = {
-                'Lips': '1',
-                'Foundation': '2',
-                'Blush': '3',
-                'Mascara': '4',
-                'Highlighter': '5'
-            };
-            return categoryMap[category] || ''; // ถ้าไม่เจอจะคืนค่าเป็นค่าว่าง
-        }
-
-        // ฟังก์ชันสำหรับการส่งฟอร์ม
-        async function handleFormSubmit(event) {
-            event.preventDefault(); // ป้องกันการรีเฟรชหน้า
-            const categoryID = getCategoryID(categorySelect.value); // แปลงเป็น CategoryID
-
-            const bodyData = {
-                productName: productNameInput.value,
-                category: categoryID,
-                price: priceInput.value,
-                description: descriptionInput.value,
-                productId: productIdInput.value,
-            };
-            console.log("Data before sending to server:", bodyData);
-
-            try {
-                const response = await callProductWS('/product', 'insertProduct', bodyData);
-                console.log('Product added:', response);
-                alert('Product added successfully!');
-                window.location.href = '/Product_view';
-            } catch (error) {
-                console.error('Error adding product:', error);
-                alert('Failed to add product.');
+                formData.imageUrl = imageUrl; // เก็บ URL รูปภาพไว้ใน formData
             }
         }
-
-        // ใช้ฟังก์ชันนี้ใน event listener
-        form.addEventListener('submit', handleFormSubmit);
-
-        // ฟังก์ชันสำหรับการยกเลิกฟอร์ม
-        function cancelForm(event) {
-            event.preventDefault();
-            if (confirm('คุณแน่ใจหรือไม่ว่าต้องการยกเลิก? การดำเนินการนี้จะรีเซ็ตข้อมูลทั้งหมด รวมถึงรูปภาพที่อัปโหลดด้วย')) {
-                resetForm();
-                alert('รีเซ็ตฟอร์มเรียบร้อยแล้ว!');
-            }
-        }
-
-        // แนบ event listener ให้ปุ่มยกเลิก
-        cancelButton.addEventListener('click', cancelForm);
     });
 
+    fileInput.click(); // เปิดหน้าต่างเลือกไฟล์
+}
+
+    // แนบ event listener ให้ image placeholder เพื่ออัปโหลดรูปภาพ
+    imagePlaceholder.addEventListener('click', handleImageUpload);
+
+    // ฟังก์ชันสำหรับการแปลง Category เป็น CategoryID
+    function getCategoryID(category) {
+        const categoryMap = {
+            'Lips': '1',
+            'Foundation': '2',
+            'Blush': '3',
+            'Mascara': '4',
+            'Highlighter': '5'
+        };
+        return categoryMap[category] || ''; // ถ้าไม่เจอจะคืนค่าเป็นค่าว่าง
+    }
+
+ 
+// ปรับปรุง handleFormSubmit ให้ส่ง URL รูปภาพไปยังเซิร์ฟเวอร์ด้วย
+async function handleFormSubmit(event) {
+    event.preventDefault();
+
+    const categoryID = getCategoryID(categorySelect.value);
+
+    const bodyData = {
+        productName: productNameInput.value,
+        category: categoryID,
+        price: priceInput.value,
+        description: descriptionInput.value,
+        productId: productIdInput.value,
+        imageUrl: formData.imageUrl || '', // เพิ่ม URL รูปภาพ
+    };
+
+    console.log("Data before sending to server:", bodyData);
+
+    try {
+        const response = await callProductWS('/product', 'insertProduct', bodyData);
+        console.log('Product added:', response);
+        alert('Product added successfully!');
+        window.location.href = '/Product_view';
+    } catch (error) {
+        console.error('Error adding product:', error);
+        alert('Failed to add product.');
+    }
+}
+
+    // ใช้ฟังก์ชันนี้ใน event listener
+    form.addEventListener('submit', handleFormSubmit);
+
+    // ฟังก์ชันสำหรับการยกเลิกฟอร์ม
+    function cancelForm(event) {
+        event.preventDefault();
+        if (confirm('คุณแน่ใจหรือไม่ว่าต้องการยกเลิก? การดำเนินการนี้จะรีเซ็ตข้อมูลทั้งหมด รวมถึงรูปภาพที่อัปโหลดด้วย')) {
+            resetForm();
+            alert('รีเซ็ตฟอร์มเรียบร้อยแล้ว!');
+        }
+    }
+
+    // แนบ event listener ให้ปุ่มยกเลิก
+    cancelButton.addEventListener('click', cancelForm);
+});
 
 
-        // document.addEventListener('DOMContentLoaded', () => {
-        //     // ใส่โค้ด JavaScript ทั้งหมดของคุณที่นี่
-        //     const form = document.getElementById('fromid');
-        //     const productNameInput = document.getElementById('input_text_Pro_name');
-        //     const categorySelect = document.getElementById('category_select');
-        //     const priceInput = document.getElementById('input_text_price');
-        //     const descriptionInput = document.getElementById('input_text_describtion');
-        //     const productIdInput = document.getElementById('input_text_Pro_id');
-        //     const imagePlaceholder = document.querySelector('.image-placeholder');
-        //     const cancelButton = document.querySelector('.cancel');
-        //     const saveButton = document.querySelector('.save');
-
-        //     let formData = {};
-
-        //     // ฟังก์ชันสำหรับรีเซ็ตฟอร์ม
-        //     function resetForm() {
-        //         productNameInput.value = '';
-        //         categorySelect.value = '';
-        //         priceInput.value = '';
-        //         descriptionInput.value = '';
-        //         productIdInput.value = '';
-        //         imagePlaceholder.style.backgroundImage = ''; // รีเซ็ตรูปภาพ
-        //         imagePlaceholder.style.backgroundSize = ''; // รีเซ็ตขนาด
-        //         imagePlaceholder.style.backgroundPosition = ''; // รีเซ็ตตำแหน่ง
-        //     }
-
-        //     // ฟังก์ชันสำหรับการอัปโหลดรูปภาพ
-        //     function handleImageUpload(event) {
-        //         const fileInput = document.createElement('input');
-        //         fileInput.type = 'file';
-        //         fileInput.accept = 'image/*';
-
-        //         fileInput.addEventListener('change', (e) => {
-        //             const file = e.target.files[0];
-        //             if (file) {
-        //                 const reader = new FileReader();
-        //                 reader.onload = (e) => {
-        //                     imagePlaceholder.style.backgroundImage = `url(${e.target.result})`;
-        //                     imagePlaceholder.style.backgroundSize = 'cover';
-        //                     imagePlaceholder.style.backgroundPosition = 'center';
-        //                 };
-        //                 reader.readAsDataURL(file);
-        //             }
-        //         });
-
-        //         fileInput.click();
-        //     }
-
-        //     // แนบ event listener ให้ image placeholder เพื่ออัปโหลดรูปภาพ
-        //     imagePlaceholder.addEventListener('click', handleImageUpload);
-
-        //     // ฟังก์ชันสำหรับการแปลง Category เป็น CategoryID
-        //     function getCategoryID(category) {
-        //         const categoryMap = {
-        //             'Lips': '1',
-        //             'Foundation': '2',
-        //             'Blush': '3',
-        //             'Mascara': '4',
-        //             'Highlighter': '5'
-        //         };
-        //         return categoryMap[category] || ''; // ถ้าไม่เจอจะคืนค่าเป็นค่าว่าง
-        //         const categoryID = getCategoryID(categorySelect.value);
-        //         console.log('Selected category:', categorySelect.value); // เช็คค่าที่เลือก
-        //         console.log('Mapped categoryID:', categoryID);
-        //     }
-
-        //     // ฟังก์ชันสำหรับการส่งฟอร์ม
-        //     async function handleFormSubmit(event) {
-        //         event.preventDefault(); // ป้องกันการรีเฟรชหน้า
-        //         const categoryID = getCategoryID(categorySelect.value); // แปลงเป็น CategoryID
-        //         //console.log("ID ",categoryID)
-        //         const bodyData = {
-        //             productName: productNameInput.value,
-        //             category: categoryID, // ใช้ CategoryID ที่แปลงแล้ว
-        //             price: priceInput.value,
-        //             description: descriptionInput.value,
-        //             productId: productIdInput.value,
-        //         };
-
-        //         try {
-                    
-        //             const response = await callProductWS('/product', 'insertProduct', bodyData);
-        //             console.log('Product added:', response);
-        //             alert('เพิ่มสินค้าสำเร็จ!');
-        //             window.location.href = '/Product_view';
-        //         } catch (error) {
-        //             console.error('Error adding product:', error);
-        //             alert('เพิ่มสินค้าไม่สำเร็จ!');
-        //         }
-        //     }
-
-        //     // ใช้ฟังก์ชันนี้ใน event listener
-        //     form.addEventListener('submit', handleFormSubmit);
-
-            // ฟังก์ชันสำหรับการยกเลิกฟอร์ม
-    //         function cancelForm(event) {
-    //             event.preventDefault();
-    //             if (confirm('คุณแน่ใจหรือไม่ว่าต้องการยกเลิก? การดำเนินการนี้จะรีเซ็ตข้อมูลทั้งหมด รวมถึงรูปภาพที่อัปโหลดด้วย')) {
-    //                 resetForm();
-    //                 alert('รีเซ็ตฟอร์มเรียบร้อยแล้ว!');
-    //             }
-    //         }
-
-    //         // แนบ event listener ให้ปุ่มยกเลิก
-    //         cancelButton.addEventListener('click', cancelForm);
-        
-
-    //     async function handleFormSubmit(event) {
-    //         event.preventDefault(); // ป้องกันการรีเฟรชหน้า
-    //         const categoryID = getCategoryID(categorySelect.value); // แปลงเป็น CategoryID
-
-    //         const bodyData = {
-    //             productName: productNameInput.value,
-    //             category: categoryID,
-    //             price: priceInput.value,
-    //             description: descriptionInput.value,
-    //             productId: productIdInput.value,
-    //         };
-    //         console.log("Data before sending to server:", bodyData);
-
-    //         try {
-    //             const response = await callProductWS('/product', 'insertProduct', bodyData);
-    //             console.log(bodyData)
-    //             console.log('Product added:', response);
-    //             alert('Product added successfully!');
-    //             window.location.href = '/Product_view';
-    //         } catch (error) {
-    //             console.error('Error adding product:', error);
-    //             alert('Failed to add product.');
-    //         }
-    //     }
-
-    //     // ใช้ฟังก์ชันนี้ใน event listener
-    //     form.addEventListener('submit', handleFormSubmit);
-    //     // Attach event listeners to buttons
-    //     cancelButton.addEventListener('click', cancelForm);
-    // });
-
-    
-   //     // ฟังก์ชันสำหรับการส่งฟอร์ม
-        //     async function handleFormSubmit(event) {
-        //         event.preventDefault(); // ป้องกันการรีเฟรชหน้า
-        //         const categoryID = getCategoryID(categorySelect.value); // แปลงเป็น CategoryID
-        //         //console.log("ID ",categoryID)
-        //         const bodyData = {
-        //             productName: productNameInput.value,
-        //             category: categoryID, // ใช้ CategoryID ที่แปลงแล้ว
-        //             price: priceInput.value,
-        //             description: descriptionInput.value,
-        //             productId: productIdInput.value,
-        //         };
-
-        //         try {
-                    
-        //             const response = await callProductWS('/product', 'insertProduct', bodyData);
-        //             console.log('Product added:', response);
-        //             alert('เพิ่มสินค้าสำเร็จ!');
-        //             window.location.href = '/Product_view';
-        //         } catch (error) {
-        //             console.error('Error adding product:', error);
-        //             alert('เพิ่มสินค้าไม่สำเร็จ!');
-        //         }
-        //     }
-
-        //     // ใช้ฟังก์ชันนี้ใน event listener
-        //     form.addEventListener('submit', handleFormSubmit);
-
-        //     // ฟังก์ชันสำหรับการยกเลิกฟอร์ม
-        //     function cancelForm(event) {
-        //         event.preventDefault();
-        //         if (confirm('คุณแน่ใจหรือไม่ว่าต้องการยกเลิก? การดำเนินการนี้จะรีเซ็ตข้อมูลทั้งหมด รวมถึงรูปภาพที่อัปโหลดด้วย')) {
-        //             resetForm();
-        //             alert('รีเซ็ตฟอร์มเรียบร้อยแล้ว!');
-        //         }
-        //     }
-
-        //     // แนบ event listener ให้ปุ่มยกเลิก
-        //     cancelButton.addEventListener('click', cancelForm);
-        // });
-
+       
 
 
     </script>
