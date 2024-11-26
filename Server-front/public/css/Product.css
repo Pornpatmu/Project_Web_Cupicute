@@ -106,3 +106,6 @@
     align-items: center; 
     text-align: center; 
 }
+.search-icon{
+    cursor: pointer;
+}

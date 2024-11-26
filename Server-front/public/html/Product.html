@@ -59,8 +59,8 @@
 
         <div class="header-container">
             <div class="search-container">
-                <img src="/images/Normal_page/magnifying-glass-solid.svg" alt="Search Icon" class="search-icon">
-                <input type="text" class="search-input">
+                <img src="/images/Normal_page/magnifying-glass-solid.svg" alt="Search Icon" class="search-icon" id="search-btn">
+                <input type="text" class="search-input" id="search-input" placeholder="Search by Product Name or ID">
             </div>
             <a href="/ProductAdd" class="add-new-btn">
                 <img src="/images/Normal_page/plus-solid.svg" alt="Add Icon" class="add-icon">
@@ -76,7 +76,6 @@
                 <div id="pro_name">Product Name</div>
                 <div id="pro_price">Price</div>
                 <div id="pro_description">Description</div>
-                <div id="pro_category">Category ID</div>
                 <div id="pro_category">Category ID</div>
                 <div>Actions</div>
             </div>
@@ -107,95 +106,198 @@
     <script type="module">
         import { callProductWS } from "/callProductWS.js";
 
+        // document.addEventListener('DOMContentLoaded', async () => {
+        //     const productTableContainer = document.querySelector('.product-table');
+
+        //     async function loadProducts() {
+        //         try {
+        //             const products = await callProductWS('/products', 'getProducts');
+
+        //             // ลบแถวที่มีอยู่ก่อนหน้านี้
+        //             document.querySelectorAll('.product-table-row:not(.product-table-header)').forEach(row => row.remove());
+
+        //             if (products.data.length > 0) {
+        //                 products.data.forEach((product) => {
+        //                     const productRow = document.createElement('div');
+        //                     productRow.className = 'product-table-row';
+
+        //                     productRow.innerHTML = `
+        //             <div>
+        //                 <img class="profile-pic" src="${product.ImageURL ? product.ImageURL : '/images/product/001.png'}" alt="${product.ProductName}">
+        //             </div>
+        //             <div>${product.ProductID}</div>
+        //             <div>${product.ProductName}</div>
+        //             <div>${product.Price}</div>
+        //             <div>${product.P_Description || 'N/A'}</div>
+        //             <div>${product.CategoryID || 'N/A'}</div>
+        //             <div>Last updated: ${product.updated_at || 'N/A'}</div>
+        //             <div>
+        //                 <a href="/ProductEdit?productId=${product.ProductID}" class="edit-btn">
+        //                     <img src="/images/Normal_page/pen-solid.svg" alt="Edit" class="icon">
+        //                 </a>
+        //                 <a href="#" class="delete-btn" data-id="${product.ProductID}">
+        //                     <img src="/images/Normal_page/trash-can-solid.svg" alt="Delete" class="icon">
+        //                 </a>
+        //             </div>
+        //         `;
+        //                     productTableContainer.appendChild(productRow);
+        //                 });
+
+        //                 document.querySelectorAll('.delete-btn').forEach(button => {
+        //                     button.addEventListener('click', async (event) => {
+        //                         event.preventDefault();
+        //                         const productId = button.getAttribute('data-id');
+        //                         await deleteProduct(productId);
+        //                     });
+        //                 });
+        //             } else {
+        //                 const emptyRow = document.createElement('div');
+        //                 emptyRow.className = 'product-table-row';
+        //                 emptyRow.innerHTML = `<div colspan="6" style="text-align: center;">No products found.</div>`;
+        //                 productTableContainer.appendChild(emptyRow);
+        //             }
+        //         } catch (error) {
+        //             console.error('Error loading products:', error);
+
+        //             const errorRow = document.createElement('div');
+        //             errorRow.className = 'product-table-row';
+        //             errorRow.innerHTML = `<div colspan="6" style="text-align: center;">Failed to load products. Please try again later.</div>`;
+        //             productTableContainer.appendChild(errorRow);
+        //         }
+        //     }
+
+        //     async function deleteProduct(productId) {
+        //         try {
+        //             const confirmation = confirm(`Are you sure you want to delete product ID: ${productId}?`);
+        //             if (!confirmation) return;
+
+        //             const result = await callProductWS('/product', 'deleteProduct', { ProductID: productId });
+
+        //             // ตรวจสอบผลลัพธ์การลบ
+        //             if (!result || result.error || result.data === 0) {
+        //                 throw new Error('Product deletion failed or no response data.');
+        //             }
+
+        //             alert('Product deleted successfully.');
+
+        //             // ลบแถวที่ถูกลบออกจากตารางใน UI
+        //             const rowToDelete = document.querySelector(`.delete-btn[data-id="${productId}"]`).closest('.product-table-row');
+        //             if (rowToDelete) {
+        //                 rowToDelete.remove();
+        //             }
+        //         } catch (error) {
+        //             alert('Failed to delete product. Please try again.');
+        //             console.error('Error deleting product:', error);
+        //         }
+        //     }
+
+        //     await loadProducts();
+        // });
         document.addEventListener('DOMContentLoaded', async () => {
-            const productTableContainer = document.querySelector('.product-table');
+    const productTableContainer = document.querySelector('.product-table');
+    const searchInput = document.querySelector('.search-input');
+    const searchButton = document.querySelector('.search-icon');
 
-            async function loadProducts() {
-                try {
-                    const products = await callProductWS('/products', 'getProducts');
+    // ฟังก์ชันโหลดข้อมูลสินค้า
+    async function loadProducts(query = "") {
+        try {
+            const endpoint = query
+                ? `/products?search=${encodeURIComponent(query)}`
+                : '/products';
+            const products = await callProductWS(endpoint, 'getProducts');
 
-                    // ลบแถวที่มีอยู่ก่อนหน้านี้
-                    document.querySelectorAll('.product-table-row:not(.product-table-header)').forEach(row => row.remove());
+            // ลบแถวที่มีอยู่ก่อนหน้านี้
+            document.querySelectorAll('.product-table-row:not(.product-table-header)').forEach(row => row.remove());
 
-                    if (products.data.length > 0) {
-                        products.data.forEach((product) => {
-                            const productRow = document.createElement('div');
-                            productRow.className = 'product-table-row';
+            if (products.data.length > 0) {
+                products.data.forEach((product) => {
+                    const productRow = document.createElement('div');
+                    productRow.className = 'product-table-row';
 
-                            productRow.innerHTML = `
-                    <div>
-                        <img class="profile-pic" src="${product.ImageURL ? product.ImageURL : '/images/product/001.png'}" alt="${product.ProductName}">
-                    </div>
-                    <div>${product.ProductID}</div>
-                    <div>${product.ProductName}</div>
-                    <div>${product.Price}</div>
-                    <div>${product.P_Description || 'N/A'}</div>
-                    <div>${product.CategoryID || 'N/A'}</div>
-                    <div>Last updated: ${product.updated_at || 'N/A'}</div>
-                    <div>
-                        <a href="/ProductEdit?productId=${product.ProductID}" class="edit-btn">
-                            <img src="/images/Normal_page/pen-solid.svg" alt="Edit" class="icon">
-                        </a>
-                        <a href="#" class="delete-btn" data-id="${product.ProductID}">
-                            <img src="/images/Normal_page/trash-can-solid.svg" alt="Delete" class="icon">
-                        </a>
-                    </div>
-                `;
-                            productTableContainer.appendChild(productRow);
-                        });
+                    productRow.innerHTML = `
+                        <div>
+                            <img class="profile-pic" src="${product.ImageURL || '/images/product/001.png'}" alt="${product.ProductName}">
+                        </div>
+                        <div>${product.ProductID}</div>
+                        <div>${product.ProductName}</div>
+                        <div>${product.Price}</div>
+                        <div>${product.P_Description || 'N/A'}</div>
+                        <div>${product.CategoryID || 'N/A'}</div>
+                        <div>Last updated: ${product.updated_at || 'N/A'}</div>
+                        <div>
+                            <a href="/ProductEdit?productId=${product.ProductID}" class="edit-btn">
+                                <img src="/images/Normal_page/pen-solid.svg" alt="Edit" class="icon">
+                            </a>
+                            <a href="#" class="delete-btn" data-id="${product.ProductID}">
+                                <img src="/images/Normal_page/trash-can-solid.svg" alt="Delete" class="icon">
+                            </a>
+                        </div>
+                    `;
+                    productTableContainer.appendChild(productRow);
+                });
 
-                        document.querySelectorAll('.delete-btn').forEach(button => {
-                            button.addEventListener('click', async (event) => {
-                                event.preventDefault();
-                                const productId = button.getAttribute('data-id');
-                                await deleteProduct(productId);
-                            });
-                        });
-                    } else {
-                        const emptyRow = document.createElement('div');
-                        emptyRow.className = 'product-table-row';
-                        emptyRow.innerHTML = `<div colspan="6" style="text-align: center;">No products found.</div>`;
-                        productTableContainer.appendChild(emptyRow);
-                    }
-                } catch (error) {
-                    console.error('Error loading products:', error);
+                document.querySelectorAll('.delete-btn').forEach(button => {
+                    button.addEventListener('click', async (event) => {
+                        event.preventDefault();
+                        const productId = button.getAttribute('data-id');
+                        await deleteProduct(productId);
+                    });
+                });
+            } else {
+                const emptyRow = document.createElement('div');
+                emptyRow.className = 'product-table-row';
+                emptyRow.innerHTML = `<div colspan="6" style="text-align: center;">No products found.</div>`;
+                productTableContainer.appendChild(emptyRow);
+            }
+        } catch (error) {
+            console.error('Error loading products:', error);
+            const errorRow = document.createElement('div');
+            errorRow.className = 'product-table-row';
+            errorRow.innerHTML = `<div colspan="6" style="text-align: center;">Failed to load products. Please try again later.</div>`;
+            productTableContainer.appendChild(errorRow);
+        }
+    }
 
-                    const errorRow = document.createElement('div');
-                    errorRow.className = 'product-table-row';
-                    errorRow.innerHTML = `<div colspan="6" style="text-align: center;">Failed to load products. Please try again later.</div>`;
-                    productTableContainer.appendChild(errorRow);
-                }
+    // ฟังก์ชันค้นหา
+    async function searchProducts() {
+        const query = searchInput.value.trim();
+        await loadProducts(query);
+    }
+
+    // ฟังก์ชันลบสินค้า
+    async function deleteProduct(productId) {
+        try {
+            const confirmation = confirm(`Are you sure you want to delete product ID: ${productId}?`);
+            if (!confirmation) return;
+
+            const result = await callProductWS('/product', 'deleteProduct', { ProductID: productId });
+
+            if (!result || result.error || result.data === 0) {
+                throw new Error('Product deletion failed or no response data.');
             }
 
-            async function deleteProduct(productId) {
-                try {
-                    const confirmation = confirm(`Are you sure you want to delete product ID: ${productId}?`);
-                    if (!confirmation) return;
+            alert('Product deleted successfully.');
 
-                    const result = await callProductWS('/product', 'deleteProduct', { ProductID: productId });
-
-                    // ตรวจสอบผลลัพธ์การลบ
-                    if (!result || result.error || result.data === 0) {
-                        throw new Error('Product deletion failed or no response data.');
-                    }
-
-                    alert('Product deleted successfully.');
-
-                    // ลบแถวที่ถูกลบออกจากตารางใน UI
-                    const rowToDelete = document.querySelector(`.delete-btn[data-id="${productId}"]`).closest('.product-table-row');
-                    if (rowToDelete) {
-                        rowToDelete.remove();
-                    }
-                } catch (error) {
-                    alert('Failed to delete product. Please try again.');
-                    console.error('Error deleting product:', error);
-                }
+            const rowToDelete = document.querySelector(`.delete-btn[data-id="${productId}"]`).closest('.product-table-row');
+            if (rowToDelete) {
+                rowToDelete.remove();
             }
+        } catch (error) {
+            alert('Failed to delete product. Please try again.');
+            console.error('Error deleting product:', error);
+        }
+    }
 
-            await loadProducts();
-        });
+    // เพิ่ม Event Listener สำหรับการค้นหา
+    searchButton.addEventListener('click', searchProducts);
 
+    // โหลดสินค้าทั้งหมดเมื่อเริ่มต้น
+    await loadProducts();
+});
 
+        
+
+        
     </script>
 
 

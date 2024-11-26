@@ -21,8 +21,21 @@ export async function callProductWS(url, method, productData = null) {
                 }
 
                 data = await response.json();
+
+                // ตรวจสอบ Response ว่ามี error หรือข้อมูลไม่เจอ
+                if (data.error) {
+                    console.error("Server error:", data.message);
+                    return null; // คืน null กลับถ้าเกิดปัญหา
+                }
+
+                if (!data.data || data.data.length === 0) {
+                    console.warn("No products found matching search criteria.");
+                    return []; // คืน array เปล่ากลับ
+                }
+
                 console.log(data);
                 break;
+
 
             case "insertProduct":
                 response = await fetch(fullURL, {
@@ -62,25 +75,25 @@ export async function callProductWS(url, method, productData = null) {
                 console.log(data);
                 break;
 
-                case "deleteProduct":
-                    response = await fetch(fullURL, {
-                        method: "DELETE",
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            ProductID: productData.ProductID,
-                        }),
-                    });
-                
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                
-                    data = await response.json();
-                    console.log(data);
-                    break;
-       
+            case "deleteProduct":
+                response = await fetch(fullURL, {
+                    method: "DELETE",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        ProductID: productData.ProductID,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                data = await response.json();
+                console.log(data);
+                break;
+
             default:
                 throw new Error("Method not supported.");
         }

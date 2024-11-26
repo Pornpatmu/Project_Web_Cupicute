@@ -191,20 +191,43 @@ Admin.get('/product/:id', function (req, res) {
     });
 });
 // ==  PRODUCT Select all    == 
+// Admin.get('/products', function (req, res) {
+//     connection.query("SELECT * FROM product", function (error, results) {
+//         if (error) throw error;
+//         return res.send({
+//             error: false,
+//             data: results,
+//             message: 'Product list'
+//         });
+//     });
+// });
 Admin.get('/products', function (req, res) {
-    connection.query("SELECT * FROM product", function (error, results) {
-        if (error) throw error;
+    const { search } = req.query; // รับ query parameter ชื่อ search
+    let sql = "SELECT * FROM product";
+    const params = [];
+
+    if (search) {
+        sql += " WHERE ProductID LIKE ? OR ProductName LIKE ?";
+        params.push(`%${search}%`, `%${search}%`);
+    }
+
+    connection.query(sql, params, function (error, results) {
+        if (error) {
+            console.error('Error in SQL query:', error);
+            return res.status(500).send({ error: true, message: 'Internal Server Error' });
+        }
+
         return res.send({
             error: false,
             data: results,
-            message: 'Product list'
+            message: results.length ? 'Product list retrieved successfully' : 'No products found',
         });
     });
 });
 
 
 // ============  ADMIN + USER Insert    ============
-Admin.post('/userAdmin',authorize, (req, res) => {
+Admin.post('/userAdmin', (req, res) => {
     let { user, admin } = req.body;
     console.log(user, admin);
 
